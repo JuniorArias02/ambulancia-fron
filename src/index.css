@@ -1,0 +1,187 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+@custom-variant pantalla-completa (&:fullscreen);
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-fondo: #f3f6fb;
+  --color-superficie: #ffffff;
+  --color-texto: #172033;
+  --color-texto-secundario: #64748b;
+  --color-borde: #e2e8f0;
+  --color-primario: #2563eb;
+  --color-primario-hover: #1d4ed8;
+  --color-institucional: #101b2d;
+  --color-cian: #06b6d4;
+  /* Cian con contraste AA para texto sobre fondos claros. */
+  --color-cian-texto: #0e7490;
+  --color-lavanda: #8b5cf6;
+  --color-exito: #16a34a;
+  --color-advertencia: #d97706;
+  --color-advertencia-hover: #b45309;
+  --color-critico: #dc2626;
+  --color-critico-hover: #b91c1c;
+  --shadow-critico: 0 8px 20px -8px rgb(220 38 38 / 0.55);
+
+  --shadow-vidrio: inset 0 1px 0 rgb(255 255 255 / 0.85), 0 12px 32px -12px rgb(16 27 45 / 0.12);
+  --shadow-vidrio-elevado: inset 0 1px 0 rgb(255 255 255 / 0.9), 0 24px 48px -16px rgb(16 27 45 / 0.18);
+  --shadow-primario: 0 8px 20px -8px rgb(37 99 235 / 0.55);
+
+  /* Aura de los marcadores que requieren atención: lenta y tenue para no distraer. */
+  --animate-aura: aura-marcador 2.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+
+  @keyframes aura-marcador {
+    0% {
+      transform: scale(0.6);
+      opacity: 0.42;
+    }
+    75%,
+    100% {
+      transform: scale(2.1);
+      opacity: 0;
+    }
+  }
+}
+
+/* La aplicación es solo de modo claro; evita que el navegador oscurezca los controles nativos. */
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply font-sans text-texto antialiased;
+  background-color: var(--color-fondo);
+  background-image:
+    radial-gradient(at 8% 6%, rgb(37 99 235 / 0.14) 0, transparent 42%),
+    radial-gradient(at 92% 10%, rgb(6 182 212 / 0.14) 0, transparent 40%),
+    radial-gradient(at 78% 94%, rgb(139 92 246 / 0.1) 0, transparent 45%),
+    radial-gradient(at 4% 92%, rgb(6 182 212 / 0.08) 0, transparent 40%);
+  background-attachment: fixed;
+}
+
+@utility vidrio {
+  background-color: rgb(255 255 255 / 0.62);
+  border: 1px solid rgb(255 255 255 / 0.72);
+  box-shadow: var(--shadow-vidrio);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
+@utility vidrio-fuerte {
+  background-color: rgb(255 255 255 / 0.84);
+  border: 1px solid rgb(255 255 255 / 0.8);
+  box-shadow: var(--shadow-vidrio-elevado);
+  backdrop-filter: blur(24px) saturate(170%);
+}
+
+@utility campo-vidrio {
+  background-color: rgb(255 255 255 / 0.7);
+  border: 1px solid rgb(226 232 240 / 0.9);
+  box-shadow: inset 0 1px 2px rgb(16 27 45 / 0.04);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .vidrio,
+  .vidrio-fuerte,
+  .popup-vidrio .leaflet-popup-content-wrapper,
+  .popup-vidrio .leaflet-popup-tip {
+    background-color: rgb(255 255 255 / 0.95);
+  }
+}
+
+/* Controles de Leaflet integrados al lenguaje de vidrio. */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background-color: var(--color-fondo);
+}
+
+.leaflet-container .leaflet-bar {
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.8);
+  border-radius: 12px;
+  background-color: rgb(255 255 255 / 0.84);
+  box-shadow: var(--shadow-vidrio-elevado);
+  backdrop-filter: blur(24px) saturate(170%);
+}
+
+.leaflet-container .leaflet-bar a {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  border-bottom-color: rgb(226 232 240 / 0.8);
+  background-color: transparent;
+  color: var(--color-texto);
+  font-weight: 500;
+  transition: background-color 150ms ease;
+}
+
+.leaflet-container .leaflet-bar a:hover {
+  background-color: rgb(255 255 255 / 0.9);
+  color: var(--color-primario);
+}
+
+/* Marcadores HTML del mapa: el contenedor de Leaflet no se ve; el foco se marca en el núcleo. */
+.marcador-mapa:focus {
+  outline: none;
+}
+
+.marcador-mapa:focus-visible .nucleo-marcador {
+  box-shadow:
+    0 0 0 3px rgb(255 255 255 / 0.95),
+    0 0 0 6px rgb(37 99 235 / 0.55);
+}
+
+/* Panel flotante sobre el mapa con el lenguaje de vidrio fuerte. */
+.popup-vidrio .leaflet-popup-content-wrapper {
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.8);
+  border-radius: 16px;
+  background-color: rgb(255 255 255 / 0.86);
+  box-shadow: var(--shadow-vidrio-elevado);
+  backdrop-filter: blur(24px) saturate(170%);
+  color: var(--color-texto);
+  animation: entrada-popup 180ms ease-out;
+}
+
+.popup-vidrio .leaflet-popup-content {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.popup-vidrio .leaflet-popup-tip {
+  background-color: rgb(255 255 255 / 0.86);
+  box-shadow: none;
+}
+
+@keyframes entrada-popup {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popup-vidrio .leaflet-popup-content-wrapper {
+    animation: none;
+  }
+}
+
+/* Tooltip de los marcadores con el lenguaje de vidrio. */
+.leaflet-tooltip.tooltip-vidrio {
+  padding: 6px 10px;
+  border: 1px solid rgb(255 255 255 / 0.8);
+  border-radius: 10px;
+  background-color: rgb(255 255 255 / 0.92);
+  box-shadow: var(--shadow-vidrio-elevado);
+  color: var(--color-texto);
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+
+.leaflet-tooltip-top.tooltip-vidrio::before {
+  border-top-color: rgb(255 255 255 / 0.92);
+}
