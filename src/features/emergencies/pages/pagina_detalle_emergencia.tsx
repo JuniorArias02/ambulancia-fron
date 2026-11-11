@@ -1,4 +1,4 @@
-import { ArrowLeft, Ban, ClipboardList, LoaderCircle, MapPin, Pencil, Timer } from 'lucide-react';
+import { ArrowLeft, Ban, ClipboardList, Info, LoaderCircle, MapPin, Pencil, Timer } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { EstadoError } from '../../../components/states/estado_error';
@@ -9,7 +9,11 @@ import { ServiciosEmergencia } from '../../assignments/components/servicios_emer
 import { AvisoDuplicada } from '../components/aviso_duplicada';
 import { DatosEmergencia } from '../components/datos_emergencia';
 import { DialogoCancelarEmergencia } from '../components/dialogo_cancelar_emergencia';
-import { InsigniaEstadoEmergencia, InsigniaPrioridad } from '../components/insignias_emergencia';
+import {
+  InsigniaEstadoEmergencia,
+  InsigniaPrioridad,
+  InsigniaReporteCiudadano,
+} from '../components/insignias_emergencia';
 import { PanelEmergencia } from '../components/panel_emergencia';
 import { PosiblesDuplicadas } from '../components/posibles_duplicadas';
 import { UbicacionEmergencia } from '../components/ubicacion_emergencia';
@@ -95,6 +99,7 @@ export function PaginaDetalleEmergencia() {
               </h2>
               <InsigniaPrioridad prioridad={emergencia.prioridad} detallada />
               <InsigniaEstadoEmergencia estado={emergencia.estado} />
+              {emergencia.informanteUsuarioId && <InsigniaReporteCiudadano />}
               {consulta.isFetching && (
                 <LoaderCircle aria-label="Actualizando" className="size-4 animate-spin text-texto-secundario" />
               )}
@@ -137,6 +142,17 @@ export function PaginaDetalleEmergencia() {
             </div>
           )}
         </div>
+
+        {/* El ciudadano no clasifica: la prioridad la define la central. */}
+        {emergencia.informanteUsuarioId && activa && !emergencia.prioridad && (
+          <p className="mt-4 flex items-start gap-2.5 rounded-xl bg-primario/5 px-4 py-3 text-[13px] text-texto">
+            <Info aria-hidden strokeWidth={1.75} className="mt-0.5 size-4 shrink-0 text-primario" />
+            <span>
+              Reportada desde la app por un ciudadano verificado.{' '}
+              <span className="font-medium">La prioridad la defines tú:</span> asígnala con «Corregir datos».
+            </span>
+          </p>
+        )}
 
         {emergencia.emergenciaPrincipalId && (
           <AvisoDuplicada emergenciaPrincipalId={emergencia.emergenciaPrincipalId} />

@@ -1,4 +1,4 @@
-import { Ban, CircleCheck, CircleSlash, Pencil, UserCog, type LucideIcon } from 'lucide-react';
+import { Ban, CircleCheck, CircleSlash, IdCard, Pencil, UserCog, type LucideIcon } from 'lucide-react';
 import { MenuAcciones, type AccionMenu } from '../../../components/ui/menu_acciones';
 import { formatearFechaHora } from '../../../utils/formato_fecha';
 import { obtenerIniciales } from '../../../utils/iniciales';
@@ -17,6 +17,7 @@ export interface AccionesUsuario {
   alEditar: (usuario: Usuario) => void;
   alCambiarRol: (usuario: Usuario) => void;
   alCambiarEstado: (usuario: Usuario, estado: EstadoUsuario) => void;
+  alVerVerificacion: (usuario: Usuario) => void;
 }
 
 interface PropiedadesTablaUsuarios extends AccionesUsuario {
@@ -27,15 +28,22 @@ interface PropiedadesTablaUsuarios extends AccionesUsuario {
 function construirAcciones(
   usuario: Usuario,
   esUsuarioActual: boolean,
-  { alEditar, alCambiarRol, alCambiarEstado }: AccionesUsuario,
+  { alEditar, alCambiarRol, alCambiarEstado, alVerVerificacion }: AccionesUsuario,
 ): AccionMenu[] {
+  const esCiudadano = usuario.rol === 'ciudadano';
   const acciones: AccionMenu[] = [
     { etiqueta: 'Editar datos', icono: Pencil, alSeleccionar: () => alEditar(usuario) },
   ];
+  if (esCiudadano) {
+    acciones.unshift({ etiqueta: 'Ver verificación', icono: IdCard, alSeleccionar: () => alVerVerificacion(usuario) });
+  }
   // El backend no permite cambiar el estado propio ni quitarse el rol de administrador.
   if (esUsuarioActual) return acciones;
 
-  acciones.push({ etiqueta: 'Cambiar rol', icono: UserCog, alSeleccionar: () => alCambiarRol(usuario) });
+  // Un ciudadano no puede pasar a ser personal: el backend responde 422.
+  if (!esCiudadano) {
+    acciones.push({ etiqueta: 'Cambiar rol', icono: UserCog, alSeleccionar: () => alCambiarRol(usuario) });
+  }
   for (const estado of ESTADOS_USUARIO) {
     if (estado === usuario.estado) continue;
     acciones.push({

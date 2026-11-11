@@ -8,6 +8,9 @@ export type TipoIncidente =
   | 'clinico'
   | 'otro';
 
+/** Cómo marcó el punto el ciudadano en la app. */
+export type OrigenUbicacion = 'gps' | 'manual';
+
 export type PrioridadEmergencia = 'roja' | 'amarilla' | 'verde';
 
 /** Solo lectura: el estado lo cambia el backend, nunca el cliente. */
@@ -34,6 +37,9 @@ export interface Emergencia {
   estado: EstadoEmergencia;
   /** Con valor, es una llamada repetida de esa emergencia. */
   emergenciaPrincipalId: string | null;
+  /** Con valor, la reportó desde la app un ciudadano verificado. */
+  informanteUsuarioId: string | null;
+  origenUbicacion: OrigenUbicacion | null;
   recibidaPor: { id: string; nombreCompleto: string | null } | null;
   recibidaEn: string;
   cerradaEn: string | null;

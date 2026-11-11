@@ -1,6 +1,6 @@
 import { api } from '../../../services/api';
 import type { ResultadoPaginado } from '../../../types/paginacion.types';
-import type { NombreRol } from '../../../types/rol.types';
+import type { RolInterno } from '../../../types/rol.types';
 import type {
   DatosActualizarUsuario,
   DatosCambioEstado,
@@ -34,7 +34,7 @@ export async function actualizarUsuario(
   return data;
 }
 
-export async function cambiarRolUsuario(id: string, rol: NombreRol): Promise<Usuario> {
+export async function cambiarRolUsuario(id: string, rol: RolInterno): Promise<Usuario> {
   const { data } = await api.put<Usuario>(`/usuarios/${encodeURIComponent(id)}/rol`, { rol });
   return data;
 }

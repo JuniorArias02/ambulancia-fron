@@ -3,11 +3,13 @@ import { CLAVES_USUARIOS } from '../constants/usuarios';
 import { listarUsuarios, obtenerUsuario } from '../services/usuarios.service';
 import type { FiltrosUsuarios } from '../types/usuario.types';
 
-export function useUsuarios(filtros: FiltrosUsuarios) {
+/** `habilitado` evita la consulta para roles sin acceso a `GET /usuarios`. */
+export function useUsuarios(filtros: FiltrosUsuarios, habilitado = true) {
   return useQuery({
     queryKey: CLAVES_USUARIOS.lista(filtros),
     queryFn: () => listarUsuarios(filtros),
     placeholderData: keepPreviousData,
+    enabled: habilitado,
   });
 }
 

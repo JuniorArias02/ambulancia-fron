@@ -7,8 +7,16 @@ import { formatearFechaHora } from '../../../utils/formato_fecha';
 import { haceTiempo } from '../../../utils/tiempo_transcurrido';
 import type { Ruta } from '../../assignments/schemas/ruta.schema';
 import { resumenRuta } from '../../assignments/utils/formato_ruta';
-import { InsigniaEstadoEmergencia, InsigniaPrioridad } from '../../emergencies/components/insignias_emergencia';
-import { esActiva, ETIQUETAS_TIPO_INCIDENTE } from '../../emergencies/constants/catalogos_emergencia';
+import {
+  InsigniaEstadoEmergencia,
+  InsigniaPrioridad,
+  InsigniaReporteCiudadano,
+} from '../../emergencies/components/insignias_emergencia';
+import {
+  esActiva,
+  ETIQUETAS_ORIGEN_UBICACION,
+  ETIQUETAS_TIPO_INCIDENTE,
+} from '../../emergencies/constants/catalogos_emergencia';
 import { ESTILO_SIN_PRIORIDAD, ESTILOS_PRIORIDAD } from '../../emergencies/constants/estilos_emergencia';
 import type { Coordenadas, Emergencia } from '../../emergencies/types/emergencia.types';
 import type { EtapaEmergencia } from '../utils/flota';
@@ -108,6 +116,7 @@ export function PopupEmergencia({ emergencia, posicion, ahora, rutas, etapa, alC
         <div className="flex flex-wrap items-center gap-1.5 px-4 pt-3">
           <InsigniaPrioridad prioridad={emergencia.prioridad} detallada />
           <InsigniaEstadoEmergencia estado={emergencia.estado} />
+          {emergencia.informanteUsuarioId && <InsigniaReporteCiudadano />}
         </div>
 
         {aviso && (
@@ -123,6 +132,11 @@ export function PopupEmergencia({ emergencia, posicion, ahora, rutas, etapa, alC
           {emergencia.direccion && (
             <Dato icono={MapPin} etiqueta="Dirección">
               {emergencia.direccion}
+            </Dato>
+          )}
+          {emergencia.origenUbicacion && (
+            <Dato icono={MapPinCheck} etiqueta="Origen del punto">
+              {ETIQUETAS_ORIGEN_UBICACION[emergencia.origenUbicacion]}
             </Dato>
           )}
           {emergencia.referenciaLugar && (

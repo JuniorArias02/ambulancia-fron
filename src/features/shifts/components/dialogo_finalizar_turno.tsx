@@ -24,7 +24,7 @@ export function DialogoFinalizarTurno({ turno, estadoAmbulancia, alCerrar }: Pro
     evento.preventDefault();
     finalizacion.mutate(turno.id, {
       onSuccess: () => {
-        notificar({ tono: 'exito', titulo: 'Turno finalizado', descripcion: codigo });
+        notificar({ tono: 'exito', titulo: 'Turno cerrado', descripcion: codigo });
         alCerrar();
       },
     });
@@ -33,8 +33,8 @@ export function DialogoFinalizarTurno({ turno, estadoAmbulancia, alCerrar }: Pro
   return (
     <Dialogo
       abierto
-      titulo="Finalizar turno"
-      descripcion={`${codigo} · ${turno.integrantes.length} tripulantes`}
+      titulo="Cerrar turno"
+      descripcion={`${codigo} · ${turno.integrantes.length} ${turno.integrantes.length === 1 ? 'tripulante' : 'tripulantes'}`}
       cerrable={!finalizacion.isPending}
       alCerrar={alCerrar}
     >
@@ -43,16 +43,20 @@ export function DialogoFinalizarTurno({ turno, estadoAmbulancia, alCerrar }: Pro
           {finalizacion.error && <AlertaError error={finalizacion.error} />}
           <p className="flex items-start gap-2.5 rounded-xl bg-primario/5 px-4 py-3 text-[13px] text-texto">
             <Info aria-hidden strokeWidth={1.75} className="mt-0.5 size-4 shrink-0 text-primario" />
-            {estadoAmbulancia === 'en_servicio'
-              ? 'La ambulancia está atendiendo un servicio: finalízalo antes de cerrar el turno.'
-              : estadoAmbulancia === 'disponible'
-                ? 'La ambulancia está disponible y pasará a fuera de servicio, con el motivo "Fin de turno".'
-                : 'La ambulancia quedará sin tripulación hasta que se inicie otro turno.'}
+            {estadoAmbulancia === 'en_servicio' ? (
+              'La ambulancia está atendiendo un servicio: finalízalo antes de cerrar el turno.'
+            ) : (
+              <span>
+                Usa esta acción si alguien olvidó salir o perdió el celular. La tripulación quedará sin ambulancia y
+                deberá seleccionarla otra vez desde la app
+                {estadoAmbulancia === 'disponible' ? '; la ambulancia pasará a fuera de servicio.' : '.'}
+              </span>
+            )}
           </p>
         </div>
         <PieFormulario
-          textoEnviar="Finalizar turno"
-          textoEnviando="Finalizando…"
+          textoEnviar="Cerrar turno"
+          textoEnviando="Cerrando…"
           icono={Square}
           tono="peligro"
           enviando={finalizacion.isPending}

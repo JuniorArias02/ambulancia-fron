@@ -16,6 +16,8 @@ export interface Turno {
   fin: string | null;
   estado: EstadoTurno;
   integrantes: IntegranteTurno[];
+  /** Una persona sola forma un turno válido: no asumir que siempre hay conductor y paramédico. */
+  tripulacionCompleta: boolean;
 }
 
 export interface FiltrosTurnos {
@@ -24,22 +26,4 @@ export interface FiltrosTurnos {
   estado?: EstadoTurno;
   pagina: number;
   limite: number;
-}
-
-export interface DatosIntegrante {
-  usuarioId: string;
-  funcion: FuncionTripulante;
-}
-
-export interface DatosIniciarTurno {
-  ambulanciaId: string;
-  integrantes: DatosIntegrante[];
-}
-
-/** Persona que se puede elegir en una fila de la tripulación. */
-export interface OpcionPersona {
-  usuarioId: string;
-  nombre: string;
-  /** Motivo por el que no se puede elegir (p. ej. "en el turno de AMB-02"). */
-  noDisponible?: string;
 }

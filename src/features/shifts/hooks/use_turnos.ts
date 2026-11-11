@@ -1,34 +1,29 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { listarUsuarios } from '../../users/services/usuarios.service';
-import { CLAVES_TURNOS, LIMITE_TURNOS_ACTIVOS, type RolTripulante } from '../constants/turnos';
+import { useIntervaloRespaldo } from '../../realtime/hooks/use_tiempo_real';
+import { CLAVES_TURNOS, LIMITE_TURNOS_ACTIVOS } from '../constants/turnos';
 import { listarTurnos } from '../services/turnos.service';
 import type { FiltrosTurnos } from '../types/turno.types';
 
-/** Máximo que admite `GET /usuarios` por página. */
-const LIMITE_PERSONAL = 100;
+/** Respaldo sin tiempo real: la tripulación cambia desde la app, no desde la web. */
+const INTERVALO_RESPALDO_MS = 15_000;
 
-export function useTurnos(filtros: FiltrosTurnos) {
+/** `enVivo`: mantiene al día un turno activo; los finalizados no cambian. */
+export function useTurnos(filtros: FiltrosTurnos, { enVivo = false } = {}) {
+  const respaldo = useIntervaloRespaldo(INTERVALO_RESPALDO_MS);
   return useQuery({
     queryKey: CLAVES_TURNOS.lista(filtros),
     queryFn: () => listarTurnos(filtros),
     placeholderData: keepPreviousData,
+    refetchInterval: enVivo ? respaldo : false,
   });
 }
 
-/** Turnos activos de todas las ambulancias: tablero del día y control de ocupados. */
+/** Turnos activos de todas las ambulancias: el tablero de tripulaciones. */
 export function useTurnosActivos() {
+  const respaldo = useIntervaloRespaldo(INTERVALO_RESPALDO_MS);
   return useQuery({
     queryKey: CLAVES_TURNOS.activos,
     queryFn: () => listarTurnos({ estado: 'activo', pagina: 1, limite: LIMITE_TURNOS_ACTIVOS }),
-  });
-}
-
-/** Personal activo de un rol para armar la tripulación. `GET /usuarios` es solo para administradores. */
-export function usePersonal(rol: RolTripulante) {
-  return useQuery({
-    queryKey: CLAVES_TURNOS.personal(rol),
-    queryFn: async () =>
-      (await listarUsuarios({ rol, estado: 'activo', pagina: 1, limite: LIMITE_PERSONAL })).datos,
-    staleTime: 60_000,
+    refetchInterval: respaldo,
   });
 }

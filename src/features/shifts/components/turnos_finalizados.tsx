@@ -23,6 +23,10 @@ export function TurnosFinalizados({ pagina, alCambiarPagina }: { pagina: number;
   }
   return (
     <>
+      <p className="border-b border-borde/70 px-5 py-3 text-[13px] text-texto-secundario">
+        Una misma jornada puede verse en varias filas: cuando alguien sale o entra a la ambulancia, el turno se cierra y
+        sigue otro. Así queda registrado quién atendió cada servicio.
+      </p>
       <div className={turnos.isFetching ? 'opacity-70 transition-opacity' : 'transition-opacity'}>
         <TablaTurnosFinalizados turnos={turnos.data.datos} />
       </div>

@@ -4,10 +4,12 @@ import { BarraLateral } from '../components/layout/barra_lateral';
 import { BarraSuperior } from '../components/layout/barra_superior';
 import { AccesoRestringido } from '../components/states/acceso_restringido';
 import { useSesion } from '../features/authentication/hooks/use_sesion';
+import { usePendientesVerificacion } from '../features/citizen_verifications/hooks/use_verificaciones';
 import { IndicadorConexion } from '../features/realtime/components/indicador_conexion';
 import { ProveedorTiempoReal } from '../features/realtime/providers/proveedor_tiempo_real';
 import { useBarraLateral } from '../hooks/use_barra_lateral';
 import { useMetadatosRuta } from '../hooks/use_metadatos_ruta';
+import { RUTAS } from '../constants/rutas';
 
 /**
  * Layout de las rutas autenticadas. Según la disposición de la ruta, la página ocupa el
@@ -21,6 +23,8 @@ export function DisenoPrincipal() {
   const barraLateral = useBarraLateral();
   const metadatos = useMetadatosRuta();
   const alSesionInvalida = useCallback(() => finalizarSesionLocal('no_autorizado'), [finalizarSesionLocal]);
+  // Solo el administrador revisa identidades; para los demás roles no se consulta.
+  const pendientes = usePendientesVerificacion(usuario?.rol === 'administrador');
 
   if (!usuario) return null;
 
@@ -46,6 +50,7 @@ export function DisenoPrincipal() {
           <div className="pointer-events-auto contents">
             <BarraLateral
               rolUsuario={usuario.rol}
+              contadores={{ [RUTAS.verificaciones]: pendientes.data }}
               contraida={barraLateral.contraida}
               abiertaMovil={barraLateral.abiertaMovil}
               alAlternarContraccion={barraLateral.alternarContraccion}

@@ -1,7 +1,10 @@
 import {
   Ambulance,
   CalendarClock,
+  ClipboardCheck,
+  ListChecks,
   Hospital,
+  IdCard,
   Route,
   LayoutDashboard,
   Users,
@@ -56,6 +59,7 @@ const GRUPOS_NAVEGACION: GrupoNavegacion[] = [
     elementos: [
       { etiqueta: 'Tripulaciones', ruta: RUTAS.turnos, icono: CalendarClock },
       { etiqueta: 'Ambulancias', ruta: RUTAS.ambulancias, icono: Ambulance },
+      { etiqueta: 'Chequeos diarios', ruta: RUTAS.chequeosDiarios, icono: ClipboardCheck },
     ],
   },
   {
@@ -65,12 +69,18 @@ const GRUPOS_NAVEGACION: GrupoNavegacion[] = [
   {
     titulo: 'Administración',
     roles: ['administrador'],
-    elementos: [{ etiqueta: 'Usuarios', ruta: RUTAS.usuarios, icono: Users }],
+    elementos: [
+      { etiqueta: 'Usuarios', ruta: RUTAS.usuarios, icono: Users },
+      { etiqueta: 'Verificación de ciudadanos', ruta: RUTAS.verificaciones, icono: IdCard },
+      { etiqueta: 'Listas de chequeo', ruta: RUTAS.listasChequeo, icono: ListChecks },
+    ],
   },
 ];
 
 interface PropiedadesBarraLateral {
   rolUsuario: NombreRol;
+  /** Elementos pendientes por ruta (p. ej. solicitudes por revisar); 0 o sin valor no se muestra. */
+  contadores?: Partial<Record<string, number>>;
   contraida: boolean;
   abiertaMovil: boolean;
   alAlternarContraccion: () => void;
@@ -79,6 +89,7 @@ interface PropiedadesBarraLateral {
 
 export function BarraLateral({
   rolUsuario,
+  contadores = {},
   contraida,
   abiertaMovil,
   alAlternarContraccion,
@@ -139,28 +150,45 @@ export function BarraLateral({
               >
                 {titulo}
               </p>
-              {elementos.map(({ etiqueta, ruta, icono: Icono }) => (
-                <NavLink
-                  key={ruta}
-                  to={ruta}
-                  // El inicio es `/`: sin `end` quedaría activo en todas las rutas.
-                  end={ruta === RUTAS.inicio}
-                  onClick={alCerrarMovil}
-                  title={contraida ? etiqueta : undefined}
-                  className={({ isActive }) =>
-                    `flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-[background-color,color,box-shadow] duration-150 focus-visible:ring-2 focus-visible:ring-primario/40 focus-visible:outline-none ${
-                      contraida ? 'md:justify-center md:px-0' : ''
-                    } ${
-                      isActive
-                        ? 'bg-white/85 text-primario shadow-vidrio ring-1 ring-white'
-                        : 'text-texto-secundario hover:bg-white/55 hover:text-texto'
-                    }`
-                  }
-                >
-                  <Icono aria-hidden strokeWidth={1.75} className="size-[18px] shrink-0" />
-                  <span className={ocultarEnContraida}>{etiqueta}</span>
-                </NavLink>
-              ))}
+              {elementos.map(({ etiqueta, ruta, icono: Icono }) => {
+                const contador = contadores[ruta] ?? 0;
+                const textoContador = contador > 99 ? '99+' : String(contador);
+                return (
+                  <NavLink
+                    key={ruta}
+                    to={ruta}
+                    // El inicio es `/`: sin `end` quedaría activo en todas las rutas.
+                    end={ruta === RUTAS.inicio}
+                    onClick={alCerrarMovil}
+                    title={contraida ? (contador > 0 ? `${etiqueta} (${contador})` : etiqueta) : undefined}
+                    className={({ isActive }) =>
+                      `flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-[background-color,color,box-shadow] duration-150 focus-visible:ring-2 focus-visible:ring-primario/40 focus-visible:outline-none ${
+                        contraida ? 'md:justify-center md:px-0' : ''
+                      } ${
+                        isActive
+                          ? 'bg-white/85 text-primario shadow-vidrio ring-1 ring-white'
+                          : 'text-texto-secundario hover:bg-white/55 hover:text-texto'
+                      }`
+                    }
+                  >
+                    <span className="relative shrink-0">
+                      <Icono aria-hidden strokeWidth={1.75} className="size-[18px]" />
+                      {contador > 0 && contraida && (
+                        <span aria-hidden className="absolute -top-1 -right-1 hidden size-2 rounded-full bg-critico ring-2 ring-white md:block" />
+                      )}
+                    </span>
+                    <span className={`min-w-0 flex-1 leading-tight ${ocultarEnContraida}`}>{etiqueta}</span>
+                    {contador > 0 && (
+                      <span
+                        className={`ml-auto shrink-0 rounded-full bg-critico/10 px-2 py-0.5 text-[11px] font-semibold text-critico tabular-nums ${ocultarEnContraida}`}
+                      >
+                        {textoContador}
+                        <span className="sr-only"> por revisar</span>
+                      </span>
+                    )}
+                  </NavLink>
+                );
+              })}
             </div>
           ))}
         </nav>

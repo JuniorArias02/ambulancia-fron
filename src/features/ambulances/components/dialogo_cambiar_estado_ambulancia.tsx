@@ -1,13 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeftRight, ArrowRight, CalendarClock, Info, Play, RotateCw } from 'lucide-react';
+import { ArrowLeftRight, ArrowRight, Info, RotateCw } from 'lucide-react';
 import { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { Link } from 'react-router';
 import { AlertaError } from '../../../components/feedback/alerta_error';
 import { CampoMotivo } from '../../../components/forms/campo_motivo';
 import { PieFormulario } from '../../../components/forms/pie_formulario';
 import { Dialogo } from '../../../components/ui/dialogo';
-import { RUTAS } from '../../../constants/rutas';
 import { useNotificaciones } from '../../../hooks/use_notificaciones';
 import { ETIQUETAS_ESTADO_OPERATIVO, TRANSICIONES } from '../constants/estados_operativos';
 import { useAmbulancia } from '../hooks/use_ambulancias';
@@ -24,7 +22,7 @@ import { ESTILOS_ESTADO_OPERATIVO } from '../constants/estilos_estado_operativo'
 import { InsigniaEstadoOperativo } from './insignia_estado_operativo';
 
 const DESCRIPCIONES_DESTINO: Record<EstadoManual, string> = {
-  disponible: 'Queda lista para ser despachada a una emergencia.',
+  disponible: 'Queda lista para despacho. Exige tripulación completa.',
   fuera_servicio: 'Deja de estar disponible para despacho.',
   mantenimiento: 'Deja de estar disponible mientras se revisa o repara.',
 };
@@ -57,9 +55,8 @@ export function DialogoCambiarEstadoAmbulancia({
   const opciones = TRANSICIONES[ambulancia.estadoOperativo];
   const estadoElegido = useWatch({ control, name: 'estado' });
   const longitudMotivo = useWatch({ control, name: 'motivo' }).length;
-  // "Disponible" exige turno activo: en ese caso se ofrece iniciarlo en lugar de reintentar.
-  const sinTurno = cambio.error?.estado === 422 && /turno/i.test(cambio.error.message);
-  const conflicto = !sinTurno && (cambio.error?.estado === 409 || cambio.error?.estado === 422);
+  // Otro usuario la cambió al mismo tiempo. Un `422` (p. ej. sin tripulación completa) es un error normal.
+  const conflicto = cambio.error?.estado === 409;
 
   // Si el estado cambió mientras tanto, la opción elegida puede haber dejado de ser válida.
   useEffect(() => {
@@ -101,24 +98,7 @@ export function DialogoCambiarEstadoAmbulancia({
     >
       <form onSubmit={handleSubmit(enviar)} noValidate>
         <div className="space-y-5 px-6 py-5">
-          {sinTurno && cambio.error && (
-            <div
-              role="alert"
-              className="flex flex-wrap items-center gap-3 rounded-xl border border-advertencia/25 bg-advertencia/8 px-4 py-3 text-sm text-texto"
-            >
-              <CalendarClock aria-hidden strokeWidth={1.75} className="size-4 shrink-0 text-advertencia" />
-              <p className="min-w-0 flex-1">{cambio.error.message}</p>
-              <Link
-                to={`${RUTAS.turnos}?iniciar=${encodeURIComponent(ambulancia.id)}`}
-                className="inline-flex h-9 shrink-0 items-center gap-2 rounded-xl bg-primario px-3 text-sm font-semibold text-white shadow-primario hover:bg-primario-hover"
-              >
-                <Play aria-hidden strokeWidth={1.75} className="size-4" />
-                Iniciar turno
-              </Link>
-            </div>
-          )}
           {cambio.error &&
-            !sinTurno &&
             (conflicto ? (
               <div
                 role="alert"
@@ -206,7 +186,7 @@ export function DialogoCambiarEstadoAmbulancia({
                 longitud={longitudMotivo}
                 longitudMaxima={LONGITUD_MAXIMA_MOTIVO}
                 disabled={cambio.isPending}
-                placeholder="Por ejemplo: inicio de turno, revisión de frenos…"
+                placeholder="Por ejemplo: revisión de frenos, regreso del taller…"
                 error={errors.motivo?.message}
                 ayuda="Queda registrado en el historial de la ambulancia."
                 {...register('motivo')}

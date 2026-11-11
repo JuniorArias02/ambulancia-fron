@@ -1,7 +1,9 @@
 import { Inbox, LoaderCircle, SearchX, UserPlus } from 'lucide-react';
 import { useState } from 'react';
+import { generatePath, useNavigate } from 'react-router';
 import { Paginacion } from '../../../components/data/paginacion';
 import { EstadoError } from '../../../components/states/estado_error';
+import { RUTAS } from '../../../constants/rutas';
 import { useSesion } from '../../authentication/hooks/use_sesion';
 import { BarraFiltrosUsuarios } from '../components/barra_filtros_usuarios';
 import { DialogoCambiarEstado } from '../components/dialogo_cambiar_estado';
@@ -53,6 +55,7 @@ function EstadoVacio({ conFiltros, alLimpiarFiltros }: PropiedadesEstadoVacio) {
 }
 
 export function PaginaUsuarios() {
+  const navegar = useNavigate();
   const { usuario: usuarioActual } = useSesion();
   const { filtros, actualizarFiltros, hayFiltrosActivos } = useFiltrosUsuarios();
   const usuarios = useUsuarios(filtros);
@@ -123,6 +126,9 @@ export function PaginaUsuarios() {
                 idUsuarioActual={usuarioActual?.id ?? ''}
                 alEditar={(usuario) => setAccion({ tipo: 'editar', usuario })}
                 alCambiarRol={(usuario) => setAccion({ tipo: 'rol', usuario })}
+                alVerVerificacion={(usuario) =>
+                  void navegar(generatePath(RUTAS.detalleVerificacion, { usuarioId: usuario.id }))
+                }
                 alCambiarEstado={(usuario, estado) => setAccion({ tipo: 'estado', usuario, estado })}
               />
             </div>

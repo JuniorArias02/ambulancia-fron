@@ -1,6 +1,6 @@
 import { api } from '../../../services/api';
 import type { ResultadoPaginado } from '../../../types/paginacion.types';
-import type { DatosIniciarTurno, DatosIntegrante, FiltrosTurnos, Turno } from '../types/turno.types';
+import type { FiltrosTurnos, Turno } from '../types/turno.types';
 
 function rutaTurno(id: string): string {
   return `/turnos/${encodeURIComponent(id)}`;
@@ -11,17 +11,7 @@ export async function listarTurnos(filtros: FiltrosTurnos): Promise<ResultadoPag
   return data;
 }
 
-export async function iniciarTurno(datos: DatosIniciarTurno): Promise<Turno> {
-  const { data } = await api.post<Turno>('/turnos', datos);
-  return data;
-}
-
-/** Reemplaza la tripulación completa (p. ej. un relevo). */
-export async function cambiarIntegrantes(id: string, integrantes: DatosIntegrante[]): Promise<Turno> {
-  const { data } = await api.put<Turno>(`${rutaTurno(id)}/integrantes`, { integrantes });
-  return data;
-}
-
+/** Cierra un turno que quedó abierto. La tripulación la arman el conductor y el paramédico desde la app. */
 export async function finalizarTurno(id: string): Promise<Turno> {
   const { data } = await api.patch<Turno>(`${rutaTurno(id)}/finalizar`);
   return data;

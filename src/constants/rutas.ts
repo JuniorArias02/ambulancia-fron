@@ -10,4 +10,9 @@ export const RUTAS = {
   turnos: '/turnos',
   ambulancias: '/ambulancias',
   detalleAmbulancia: '/ambulancias/:id',
+  listasChequeo: '/listas-chequeo',
+  detalleListaChequeo: '/listas-chequeo/:id',
+  chequeosDiarios: '/chequeos-diarios',
+  verificaciones: '/verificaciones-ciudadanos',
+  detalleVerificacion: '/verificaciones-ciudadanos/:usuarioId',
 } as const;

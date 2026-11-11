@@ -1,4 +1,4 @@
-import type { NombreRol } from '../../../types/rol.types';
+import type { NombreRol, RolInterno } from '../../../types/rol.types';
 
 export type EstadoUsuario = 'activo' | 'inactivo' | 'bloqueado';
 
@@ -20,10 +20,15 @@ export interface RolSistema {
   descripcion: string;
 }
 
+/** Rol del personal: el único que se puede crear o asignar desde la web. */
+export interface RolAsignable extends RolSistema {
+  nombre: RolInterno;
+}
+
 export interface FiltrosUsuarios {
   busqueda?: string;
   estado?: EstadoUsuario;
-  rol?: NombreRol;
+  rol?: RolInterno;
   pagina: number;
   limite: number;
 }
@@ -34,7 +39,7 @@ export interface DatosCrearUsuario {
   correo: string;
   telefono?: string;
   contrasena: string;
-  rol: NombreRol;
+  rol: RolInterno;
 }
 
 /** Solo datos personales; `telefono: null` elimina el teléfono. */

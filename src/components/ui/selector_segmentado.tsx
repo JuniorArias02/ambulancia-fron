@@ -30,7 +30,7 @@ export function SelectorSegmentado<T extends string>({
             type="button"
             aria-pressed={activa}
             onClick={() => alCambiar(opcion)}
-            className={`inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-[background-color,color,box-shadow] duration-150 focus-visible:ring-2 focus-visible:ring-primario/40 focus-visible:outline-none ${
+            className={`inline-flex h-8 shrink-0 items-center gap-2 rounded-lg px-3 whitespace-nowrap text-sm font-medium transition-[background-color,color,box-shadow] duration-150 focus-visible:ring-2 focus-visible:ring-primario/40 focus-visible:outline-none ${
               activa ? 'bg-white text-primario shadow-vidrio' : 'text-texto-secundario hover:bg-white/70 hover:text-texto'
             }`}
           >

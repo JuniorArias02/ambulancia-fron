@@ -5,7 +5,7 @@ import { EstadoError } from '../../../components/states/estado_error';
 import { Dialogo } from '../../../components/ui/dialogo';
 import { ETIQUETAS_ROL } from '../../../constants/roles';
 import { useNotificaciones } from '../../../hooks/use_notificaciones';
-import type { NombreRol } from '../../../types/rol.types';
+import { esRolInterno, type NombreRol } from '../../../types/rol.types';
 import { useCambiarRolUsuario } from '../hooks/use_mutaciones_usuario';
 import { useRoles } from '../hooks/use_roles';
 import type { Usuario } from '../types/usuario.types';
@@ -24,6 +24,7 @@ export function DialogoCambiarRol({ usuario, alCerrar }: PropiedadesDialogoCambi
 
   const enviar = (evento: FormEvent) => {
     evento.preventDefault();
+    if (!esRolInterno(rolSeleccionado)) return;
     cambio.mutate(
       { id: usuario.id, rol: rolSeleccionado },
       {

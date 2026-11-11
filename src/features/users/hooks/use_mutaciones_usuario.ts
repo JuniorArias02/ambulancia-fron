@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { NombreRol } from '../../../types/rol.types';
+import type { RolInterno } from '../../../types/rol.types';
 import { CLAVES_USUARIOS } from '../constants/usuarios';
 import {
   actualizarUsuario,
@@ -32,7 +32,7 @@ export function useActualizarUsuario() {
 export function useCambiarRolUsuario() {
   const invalidar = useInvalidarUsuarios();
   return useMutation({
-    mutationFn: ({ id, rol }: { id: string; rol: NombreRol }) => cambiarRolUsuario(id, rol),
+    mutationFn: ({ id, rol }: { id: string; rol: RolInterno }) => cambiarRolUsuario(id, rol),
     onSuccess: invalidar,
   });
 }

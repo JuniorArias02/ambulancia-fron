@@ -15,6 +15,10 @@ vi.mock('../features/authentication/hooks/use_sesion', () => ({
   }),
 }));
 
+vi.mock('../features/citizen_verifications/hooks/use_verificaciones', () => ({
+  usePendientesVerificacion: () => ({ data: undefined }),
+}));
+
 // La conexión en tiempo real tiene su propia prueba; aquí solo importa el acceso por rol.
 vi.mock('../features/realtime/providers/proveedor_tiempo_real', () => ({
   ProveedorTiempoReal: ({ children }: { children: ReactNode }) => children,

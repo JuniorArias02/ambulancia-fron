@@ -1,17 +1,15 @@
 import { useCallback, useState } from 'react';
 import { AvisoDescartarCambios } from '../../../components/feedback/aviso_descartar_cambios';
 import { Dialogo } from '../../../components/ui/dialogo';
-import type { Turno } from '../types/turno.types';
-import { FormularioTurno } from './formulario_turno';
+import type { ListaChequeo } from '../types/lista_chequeo.types';
+import { FormularioCrearLista } from './formulario_crear_lista';
 
-interface PropiedadesPanelTurno {
-  /** `null` inicia un turno; un turno abre el cambio de tripulación. */
-  turno: Turno | null;
-  ambulanciaInicial?: string;
+interface PropiedadesPanelCrearLista {
+  alCrear: (lista: ListaChequeo) => void;
   alCerrar: () => void;
 }
 
-export function PanelTurno({ turno, ambulanciaInicial, alCerrar }: PropiedadesPanelTurno) {
+export function PanelCrearLista({ alCrear, alCerrar }: PropiedadesPanelCrearLista) {
   const [sinGuardar, setSinGuardar] = useState(false);
   const [confirmandoDescarte, setConfirmandoDescarte] = useState(false);
 
@@ -24,12 +22,8 @@ export function PanelTurno({ turno, ambulanciaInicial, alCerrar }: PropiedadesPa
     <Dialogo
       abierto
       variante="lateral"
-      titulo={turno ? 'Cambiar tripulación' : 'Iniciar turno'}
-      descripcion={
-        turno
-          ? `${turno.ambulanciaCodigo ?? 'Ambulancia'} · reemplaza la tripulación completa`
-          : 'Asigna la tripulación que operará la ambulancia.'
-      }
+      titulo="Nueva lista de chequeo"
+      descripcion="Nace inactiva: actívala cuando esté lista para los conductores."
       alCerrar={solicitarCierre}
     >
       {confirmandoDescarte && (
@@ -37,13 +31,7 @@ export function PanelTurno({ turno, ambulanciaInicial, alCerrar }: PropiedadesPa
           <AvisoDescartarCambios alDescartar={alCerrar} alSeguirEditando={() => setConfirmandoDescarte(false)} />
         </div>
       )}
-      <FormularioTurno
-        turno={turno}
-        ambulanciaInicial={ambulanciaInicial}
-        alCambiarSinGuardar={setSinGuardar}
-        alTerminar={alCerrar}
-        alCancelar={solicitarCierre}
-      />
+      <FormularioCrearLista alCambiarSinGuardar={setSinGuardar} alCrear={alCrear} alCancelar={solicitarCierre} />
     </Dialogo>
   );
 }

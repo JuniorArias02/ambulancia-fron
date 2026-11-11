@@ -1,22 +1,15 @@
-import { CalendarClock, Play } from 'lucide-react';
-import { Link } from 'react-router';
-import { RUTAS } from '../../../constants/rutas';
+import { CalendarClock } from 'lucide-react';
 import { useAhora } from '../../../hooks/use_ahora';
 import { formatearFechaHora } from '../../../utils/formato_fecha';
 import { haceTiempo } from '../../../utils/tiempo_transcurrido';
 import { useTurnos } from '../hooks/use_turnos';
+import { AvisoTripulacionIncompleta } from './aviso_tripulacion_incompleta';
 import { ListaIntegrantes } from './lista_integrantes';
 
-interface PropiedadesTripulacionAmbulancia {
-  ambulanciaId: string;
-  /** Muestra el acceso para iniciar turno (requiere el listado de personal). */
-  puedeIniciarTurno: boolean;
-}
-
 /** Tripulación del turno activo de una ambulancia, para su detalle. */
-export function TripulacionAmbulancia({ ambulanciaId, puedeIniciarTurno }: PropiedadesTripulacionAmbulancia) {
+export function TripulacionAmbulancia({ ambulanciaId }: { ambulanciaId: string }) {
   const ahora = useAhora();
-  const turnos = useTurnos({ ambulanciaId, estado: 'activo', pagina: 1, limite: 1 });
+  const turnos = useTurnos({ ambulanciaId, estado: 'activo', pagina: 1, limite: 1 }, { enVivo: true });
   const turno = turnos.data?.datos[0];
 
   if (turnos.isPending) {
@@ -29,20 +22,9 @@ export function TripulacionAmbulancia({ ambulanciaId, puedeIniciarTurno }: Propi
 
   if (!turno) {
     return (
-      <div className="flex flex-wrap items-center gap-3 px-5 py-4">
-        <p className="flex-1 text-[13px] text-texto-secundario">
-          Sin turno activo: no se puede habilitar ni despachar hasta que tenga tripulación.
-        </p>
-        {puedeIniciarTurno && (
-          <Link
-            to={`${RUTAS.turnos}?iniciar=${encodeURIComponent(ambulanciaId)}`}
-            className="campo-vidrio inline-flex h-9 items-center gap-2 rounded-xl px-3 text-sm font-medium text-texto transition-colors duration-150 hover:bg-white"
-          >
-            <Play aria-hidden strokeWidth={1.75} className="size-4" />
-            Iniciar turno
-          </Link>
-        )}
-      </div>
+      <p className="px-5 py-4 text-[13px] text-texto-secundario">
+        Sin tripulación. El conductor y el paramédico la seleccionan desde la app.
+      </p>
     );
   }
 
@@ -56,6 +38,7 @@ export function TripulacionAmbulancia({ ambulanciaId, puedeIniciarTurno }: Propi
         En turno {haceTiempo(turno.inicio, ahora)}
       </p>
       <ListaIntegrantes integrantes={turno.integrantes} />
+      <AvisoTripulacionIncompleta turno={turno} />
     </div>
   );
 }

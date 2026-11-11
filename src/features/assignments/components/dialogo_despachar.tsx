@@ -93,7 +93,7 @@ export function DialogoDespachar({ emergencia, alCerrar }: PropiedadesDialogoDes
       <form onSubmit={enviar} className="flex min-h-full flex-col">
         <div className="flex-1 space-y-4 px-6 py-5">
           {despacho.error && <AlertaError error={despacho.error} />}
-          {despacho.error?.estado === 409 && (
+          {(despacho.error?.estado === 409 || despacho.error?.estado === 422) && (
             <p className="text-[13px] text-texto-secundario">La lista se actualizó con la disponibilidad actual.</p>
           )}
 
@@ -126,7 +126,8 @@ export function DialogoDespachar({ emergencia, alCerrar }: PropiedadesDialogoDes
               <Inbox aria-hidden strokeWidth={1.75} className="mb-3 size-6 text-texto-secundario" />
               <p className="text-sm font-semibold text-texto">No hay ambulancias disponibles</p>
               <p className="mt-1 text-[13px] text-texto-secundario">
-                Habilita una ambulancia con turno activo o espera a que termine un servicio.
+                Una ambulancia queda disponible cuando su conductor y su paramédico la seleccionan desde la app, o al
+                terminar un servicio.
               </p>
             </div>
           ) : (

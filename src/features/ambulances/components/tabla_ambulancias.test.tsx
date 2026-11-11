@@ -40,7 +40,7 @@ describe('TablaAmbulancias', () => {
     expect(screen.getAllByText('ABC 123').length).toBeGreaterThan(0);
   });
 
-  it('al despachador no le ofrece editar', async () => {
+  it('sin permiso de edición no ofrece editar', async () => {
     const menu = await abrirMenu(ambulancia, { alCambiarEstado: vi.fn() });
 
     expect(menu.getByRole('button', { name: 'Cambiar estado' })).toBeInTheDocument();

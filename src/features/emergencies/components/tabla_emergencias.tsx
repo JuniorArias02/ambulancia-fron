@@ -7,7 +7,7 @@ import { esActiva, ETIQUETAS_TIPO_INCIDENTE } from '../constants/catalogos_emerg
 import { ESTILO_SIN_PRIORIDAD, ESTILOS_PRIORIDAD } from '../constants/estilos_emergencia';
 import type { Emergencia } from '../types/emergencia.types';
 import { tiempoTranscurrido } from '../../../utils/tiempo_transcurrido';
-import { InsigniaEstadoEmergencia, InsigniaPrioridad } from './insignias_emergencia';
+import { InsigniaEstadoEmergencia, InsigniaPrioridad, InsigniaReporteCiudadano } from './insignias_emergencia';
 
 export interface AccionesEmergencia {
   alVerDetalle: (emergencia: Emergencia) => void;
@@ -63,6 +63,7 @@ function IdentidadEmergencia({ emergencia }: { emergencia: Emergencia }) {
             Duplicada
           </span>
         )}
+        {emergencia.informanteUsuarioId && <InsigniaReporteCiudadano compacta />}
       </p>
       <p className="mt-0.5 truncate text-[13px] text-texto-secundario">{emergencia.descripcion}</p>
     </div>

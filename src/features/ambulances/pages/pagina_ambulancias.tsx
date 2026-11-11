@@ -4,6 +4,7 @@ import { generatePath, useNavigate } from 'react-router';
 import { Paginacion } from '../../../components/data/paginacion';
 import { EstadoError } from '../../../components/states/estado_error';
 import { RUTAS } from '../../../constants/rutas';
+import { useIntervaloRespaldo } from '../../realtime/hooks/use_tiempo_real';
 import { BarraFiltrosAmbulancias } from '../components/barra_filtros_ambulancias';
 import { DialogoCambiarEstadoAmbulancia } from '../components/dialogo_cambiar_estado_ambulancia';
 import { EsqueletoAmbulancias } from '../components/esqueleto_ambulancias';
@@ -14,6 +15,8 @@ import { useFiltrosAmbulancias } from '../hooks/use_filtros_ambulancias';
 import { usePermisosAmbulancias } from '../hooks/use_permisos_ambulancias';
 import { useTiposAmbulancia } from '../hooks/use_tipos_ambulancia';
 import type { Ambulancia } from '../types/ambulancia.types';
+
+const INTERVALO_RESPALDO_MS = 15_000;
 
 type AccionActiva =
   | { tipo: 'crear' }
@@ -41,7 +44,7 @@ function EstadoVacio({ conFiltros, puedeRegistrar, alLimpiarFiltros }: Propiedad
           ? 'Ninguna ambulancia coincide con los filtros aplicados.'
           : puedeRegistrar
             ? 'Registra el primer vehículo de la flota.'
-            : 'Un administrador debe registrar los vehículos de la flota.'}
+            : 'Los vehículos registrados aparecerán aquí.'}
       </p>
       {conFiltros && (
         <button
@@ -60,7 +63,8 @@ export function PaginaAmbulancias() {
   const navegar = useNavigate();
   const { puedeGestionar, puedeCambiarEstado } = usePermisosAmbulancias();
   const { filtros, actualizarFiltros, hayFiltrosActivos } = useFiltrosAmbulancias();
-  const ambulancias = useAmbulancias(filtros);
+  // El estado también cambia solo, cuando la tripulación entra o sale desde la app.
+  const ambulancias = useAmbulancias(filtros, useIntervaloRespaldo(INTERVALO_RESPALDO_MS));
   const tipos = useTiposAmbulancia();
   const [accion, setAccion] = useState<AccionActiva | null>(null);
   const cerrarAccion = () => setAccion(null);

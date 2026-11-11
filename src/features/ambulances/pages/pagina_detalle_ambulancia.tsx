@@ -54,7 +54,8 @@ function EsqueletoDetalle() {
 export function PaginaDetalleAmbulancia() {
   const { id = '' } = useParams();
   const navegar = useNavigate();
-  const consulta = useAmbulancia(id);
+  // El estado también cambia solo, cuando la tripulación entra o sale desde la app.
+  const consulta = useAmbulancia(id, undefined, { enVivo: true });
   const { puedeGestionar, puedeCambiarEstado, puedeVerAutores } = usePermisosAmbulancias();
   const [accion, setAccion] = useState<AccionActiva | null>(null);
   const cerrarAccion = () => setAccion(null);
@@ -179,7 +180,7 @@ export function PaginaDetalleAmbulancia() {
             >
               Tripulación
             </h3>
-            <TripulacionAmbulancia ambulanciaId={ambulancia.id} puedeIniciarTurno={puedeGestionar} />
+            <TripulacionAmbulancia ambulanciaId={ambulancia.id} />
           </section>
         </div>
 

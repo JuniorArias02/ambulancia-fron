@@ -1,6 +1,12 @@
-import { DESCRIPCIONES_PRIORIDAD, ETIQUETAS_ESTADO_EMERGENCIA, ETIQUETAS_PRIORIDAD } from '../constants/catalogos_emergencia';
+import { BadgeCheck, LocateFixed, MousePointerClick } from 'lucide-react';
+import {
+  DESCRIPCIONES_PRIORIDAD,
+  ETIQUETAS_ORIGEN_UBICACION,
+  ETIQUETAS_ESTADO_EMERGENCIA,
+  ETIQUETAS_PRIORIDAD,
+} from '../constants/catalogos_emergencia';
 import { ESTILO_SIN_PRIORIDAD, ESTILOS_ESTADO_EMERGENCIA, ESTILOS_PRIORIDAD } from '../constants/estilos_emergencia';
-import type { EstadoEmergencia, PrioridadEmergencia } from '../types/emergencia.types';
+import type { EstadoEmergencia, OrigenUbicacion, PrioridadEmergencia } from '../types/emergencia.types';
 
 const claseInsignia =
   'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap';
@@ -35,6 +41,30 @@ export function InsigniaEstadoEmergencia({ estado }: { estado: EstadoEmergencia 
     <span className={`${claseInsignia} ${clases}`}>
       <Icono aria-hidden strokeWidth={2} className="size-3.5" />
       {ETIQUETAS_ESTADO_EMERGENCIA[estado]}
+    </span>
+  );
+}
+
+/** Reporte enviado desde la app por un ciudadano con la identidad aprobada. */
+export function InsigniaReporteCiudadano({ compacta = false }: { compacta?: boolean }) {
+  return (
+    <span
+      title={compacta ? 'Reportado por ciudadano verificado' : undefined}
+      className={`${claseInsignia} bg-cian/12 text-cian-texto`}
+    >
+      <BadgeCheck aria-hidden strokeWidth={2} className="size-3.5" />
+      {compacta ? 'Ciudadano' : 'Reportado por ciudadano verificado'}
+    </span>
+  );
+}
+
+/** Cómo se obtuvo el punto de un reporte ciudadano: GPS del celular o marcado en el mapa. */
+export function OrigenUbicacionReporte({ origen }: { origen: OrigenUbicacion }) {
+  const Icono = origen === 'gps' ? LocateFixed : MousePointerClick;
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[13px] text-texto-secundario">
+      <Icono aria-hidden strokeWidth={1.75} className="size-3.5 shrink-0" />
+      {ETIQUETAS_ORIGEN_UBICACION[origen]}
     </span>
   );
 }

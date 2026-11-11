@@ -2,6 +2,7 @@ import type {
   CriterioDuplicado,
   EstadoEmergencia,
   FuenteEmergencia,
+  OrigenUbicacion,
   PrioridadEmergencia,
   TipoIncidente,
 } from '../types/emergencia.types';
@@ -34,6 +35,11 @@ export const ETIQUETAS_FUENTE: Record<FuenteEmergencia, string> = {
   telefono: 'Teléfono',
   radio: 'Radio',
   app: 'Aplicación',
+};
+
+export const ETIQUETAS_ORIGEN_UBICACION: Record<OrigenUbicacion, string> = {
+  gps: 'Ubicación por GPS',
+  manual: 'Ubicación marcada a mano',
 };
 
 export const ETIQUETAS_TIPO_INCIDENTE: Record<TipoIncidente, string> = {

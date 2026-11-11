@@ -1,7 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { crearClienteConsultas } from '../../../app/cliente_consultas';
 import { ProveedorNotificaciones } from '../../../providers/proveedor_notificaciones';
@@ -45,9 +44,7 @@ function renderizar(ambulancia: Ambulancia) {
   render(
     <QueryClientProvider client={crearClienteConsultas()}>
       <ProveedorNotificaciones>
-        <MemoryRouter>
-          <DialogoCambiarEstadoAmbulancia ambulancia={ambulancia} alCerrar={vi.fn()} />
-        </MemoryRouter>
+        <DialogoCambiarEstadoAmbulancia ambulancia={ambulancia} alCerrar={vi.fn()} />
       </ProveedorNotificaciones>
     </QueryClientProvider>,
   );
@@ -97,20 +94,20 @@ describe('DialogoCambiarEstadoAmbulancia', () => {
     expect(servicio.obtenerAmbulancia).toHaveBeenCalledTimes(2);
   });
 
-  it('si falta el turno ofrece iniciarlo para esa ambulancia', async () => {
+  it('sin tripulación completa muestra el mensaje del backend, sin enlaces para iniciar turno', async () => {
     const fueraServicio: Ambulancia = { ...base, estadoOperativo: 'fuera_servicio' };
     servicio.obtenerAmbulancia.mockResolvedValue(fueraServicio);
     servicio.cambiarEstadoAmbulancia.mockRejectedValue(
-      new ErrorApi(422, 'La ambulancia no tiene un turno activo; inicie un turno antes de habilitarla'),
+      new ErrorApi(422, 'La ambulancia no tiene tripulación completa; el conductor y el paramédico deben seleccionarla desde la app'),
     );
     renderizar(fueraServicio);
 
     await waitFor(() => expect(botonEnviar()).toBeEnabled());
     await userEvent.click(screen.getByRole('radio', { name: /Disponible/ }));
-    await userEvent.type(screen.getByLabelText(/Motivo/), 'Inicio de turno');
+    await userEvent.type(screen.getByLabelText(/Motivo/), 'Regreso del taller');
     await userEvent.click(botonEnviar());
 
-    const enlace = await screen.findByRole('link', { name: 'Iniciar turno' });
-    expect(enlace).toHaveAttribute('href', `/turnos?iniciar=${base.id}`);
+    expect(await screen.findByRole('alert')).toHaveTextContent(/no tiene tripulación completa/);
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 });

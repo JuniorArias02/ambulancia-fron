@@ -30,6 +30,8 @@ const base: Emergencia = {
   numeroVictimas: null,
   estado: 'recibida',
   emergenciaPrincipalId: null,
+  informanteUsuarioId: null,
+  origenUbicacion: null,
   recibidaPor: null,
   recibidaEn: '2026-10-24T12:05:00.000Z',
   cerradaEn: null,

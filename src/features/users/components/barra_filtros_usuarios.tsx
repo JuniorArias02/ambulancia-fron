@@ -3,14 +3,15 @@ import { useEffect, useState } from 'react';
 import { claseControlFiltro, SelectorFiltro } from '../../../components/forms/selector_filtro';
 import { ETIQUETAS_ROL } from '../../../constants/roles';
 import { useValorRetrasado } from '../../../hooks/use_valor_retrasado';
-import { NOMBRES_ROLES, type NombreRol } from '../../../types/rol.types';
+import { ROLES_INTERNOS, type RolInterno } from '../../../types/rol.types';
 import { ESTADOS_USUARIO, ETIQUETAS_ESTADO } from '../constants/estados_usuario';
 import type { EstadoUsuario, FiltrosUsuarios } from '../types/usuario.types';
 
 const RETRASO_BUSQUEDA_MS = 350;
 
 const OPCIONES_ESTADO = ESTADOS_USUARIO.map((estado) => ({ valor: estado, texto: ETIQUETAS_ESTADO[estado] }));
-const OPCIONES_ROL = NOMBRES_ROLES.map((rol) => ({ valor: rol, texto: ETIQUETAS_ROL[rol] }));
+// Usuarios es la gestión del personal: el ciudadano no es un filtro útil aquí.
+const OPCIONES_ROL = ROLES_INTERNOS.map((rol) => ({ valor: rol, texto: ETIQUETAS_ROL[rol] }));
 
 interface PropiedadesBarraFiltrosUsuarios {
   filtros: FiltrosUsuarios;
@@ -64,7 +65,7 @@ export function BarraFiltrosUsuarios({
           textoTodos="Todos los estados"
           alCambiar={(estado) => alCambiar({ estado })}
         />
-        <SelectorFiltro<NombreRol>
+        <SelectorFiltro<RolInterno>
           etiqueta="Filtrar por rol"
           valor={filtros.rol}
           opciones={OPCIONES_ROL}

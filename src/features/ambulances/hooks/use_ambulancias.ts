@@ -48,13 +48,18 @@ export function useAmbulancia(id: string, conocida?: Ambulancia, { enVivo = fals
   });
 }
 
-/** Historial del más reciente al más antiguo, cargado por páginas. */
+/**
+ * Historial del más reciente al más antiguo, cargado por páginas. Incluye los cambios automáticos
+ * ("Tripulación completa desde la app"), que llegan sin que nadie los haga desde la web.
+ */
 export function useHistorialEstados(id: string) {
+  const respaldo = useIntervaloRespaldo(INTERVALO_EN_VIVO_MS);
   return useInfiniteQuery({
     queryKey: CLAVES_AMBULANCIAS.historial(id),
     queryFn: ({ pageParam }) => listarHistorialEstados(id, pageParam, LIMITE_HISTORIAL),
     initialPageParam: 1,
     getNextPageParam: ({ pagina, limite, total }) =>
       pagina * limite < total ? pagina + 1 : undefined,
+    refetchInterval: respaldo,
   });
 }

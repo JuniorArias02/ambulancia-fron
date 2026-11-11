@@ -18,6 +18,8 @@ const emergencia: Emergencia = {
   numeroVictimas: 2,
   estado: 'recibida',
   emergenciaPrincipalId: null,
+  informanteUsuarioId: null,
+  origenUbicacion: null,
   recibidaPor: { id: 'u1', nombreCompleto: 'Laura Gómez' },
   recibidaEn: '2026-10-24T12:00:03.000Z',
   cerradaEn: null,

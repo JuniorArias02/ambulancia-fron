@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
-import { NOMBRES_ROLES, type NombreRol } from '../../../types/rol.types';
+import { ROLES_INTERNOS, type RolInterno } from '../../../types/rol.types';
 import { ESTADOS_USUARIO } from '../constants/estados_usuario';
 import { LIMITE_POR_PAGINA } from '../constants/usuarios';
 import type { EstadoUsuario, FiltrosUsuarios } from '../types/usuario.types';
@@ -9,8 +9,8 @@ function esEstado(valor: string | null): valor is EstadoUsuario {
   return ESTADOS_USUARIO.some((estado) => estado === valor);
 }
 
-function esRol(valor: string | null): valor is NombreRol {
-  return NOMBRES_ROLES.some((rol) => rol === valor);
+function esRol(valor: string | null): valor is RolInterno {
+  return ROLES_INTERNOS.some((rol) => rol === valor);
 }
 
 type CambiosFiltros = Partial<Omit<FiltrosUsuarios, 'limite'>>;

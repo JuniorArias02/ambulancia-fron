@@ -9,6 +9,7 @@ import { PanelUsuario } from './panel_usuario';
 vi.mock('../services/roles.service', () => ({
   listarRoles: vi.fn().mockResolvedValue([
     { id: '1', nombre: 'despachador', descripcion: 'Despacha ambulancias' },
+    { id: '2', nombre: 'ciudadano', descripcion: 'Usuario de la app' },
   ]),
 }));
 
@@ -34,6 +35,13 @@ function renderizar(alCerrar: () => void) {
 }
 
 describe('PanelUsuario · crear', () => {
+  it('no ofrece el rol ciudadano: se registra desde la app', async () => {
+    renderizar(vi.fn());
+
+    expect(await screen.findByRole('option', { name: 'Despachador' })).toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: 'Ciudadano' })).not.toBeInTheDocument();
+  });
+
   it('se cierra con la X si no se escribió nada', async () => {
     const alCerrar = vi.fn();
     renderizar(alCerrar);

@@ -28,6 +28,10 @@ describe('esquemaCrearUsuario', () => {
   it('rechaza roles desconocidos', () => {
     expect(esquemaCrearUsuario.safeParse({ ...valido, rol: 'gerente' }).success).toBe(false);
   });
+
+  it('no permite crear ciudadanos: se registran desde la app', () => {
+    expect(esquemaCrearUsuario.safeParse({ ...valido, rol: 'ciudadano' }).success).toBe(false);
+  });
 });
 
 describe('esquemaCambioEstado', () => {

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { NOMBRES_ROLES } from '../../../types/rol.types';
+import { ROLES_INTERNOS } from '../../../types/rol.types';
 import { ESTADOS_USUARIO } from '../constants/estados_usuario';
 
 // Refleja las validaciones del backend para guiar al usuario; el backend sigue siendo la autoridad.
@@ -42,8 +42,8 @@ export const esquemaCrearUsuario = z.object({
     .regex(/^(?=.*\p{L})(?=.*\d).+$/u, 'Debe contener al menos una letra y un número.'),
   // El selector empieza vacío (''); al validar solo se acepta un rol real.
   rol: z
-    .union([z.literal(''), z.enum(NOMBRES_ROLES)])
-    .pipe(z.enum(NOMBRES_ROLES, { message: 'Selecciona un rol.' })),
+    .union([z.literal(''), z.enum(ROLES_INTERNOS)])
+    .pipe(z.enum(ROLES_INTERNOS, { message: 'Selecciona un rol.' })),
 });
 
 export type EntradaCrearUsuario = z.input<typeof esquemaCrearUsuario>;

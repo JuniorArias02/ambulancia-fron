@@ -6,6 +6,7 @@ import { ETIQUETAS_FUNCION } from '../constants/turnos';
 import type { Turno } from '../types/turno.types';
 
 function textoTripulacion(turno: Turno): string {
+  if (turno.integrantes.length === 0) return 'Sin integrantes';
   return turno.integrantes
     .map(({ nombreCompleto, funcion }) => `${nombreCompleto ?? 'Sin nombre'} (${ETIQUETAS_FUNCION[funcion].toLowerCase()})`)
     .join(', ');

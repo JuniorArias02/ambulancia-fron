@@ -76,7 +76,7 @@ export function FormularioAmbulancia({
           notificar({
             tono: 'exito',
             titulo: 'Ambulancia registrada',
-            descripcion: `${creada.codigo} quedó fuera de servicio hasta que se habilite.`,
+            descripcion: `${creada.codigo} queda fuera de servicio hasta tener tripulación completa.`,
           });
           alTerminar();
         },
@@ -183,7 +183,7 @@ export function FormularioAmbulancia({
             <Info aria-hidden strokeWidth={1.75} className="mt-0.5 size-4 shrink-0 text-primario" />
             <p className="text-[13px] text-texto-secundario">
               Toda ambulancia nueva queda <span className="font-medium text-texto">fuera de servicio</span>.
-              Cámbiale el estado a disponible cuando esté lista para operar.
+              Pasa a disponible sola cuando el conductor y el paramédico la seleccionan desde la app.
             </p>
           </div>
         )}

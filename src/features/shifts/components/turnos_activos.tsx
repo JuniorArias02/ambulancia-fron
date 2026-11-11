@@ -2,29 +2,26 @@ import { CalendarClock } from 'lucide-react';
 import { EstadoError } from '../../../components/states/estado_error';
 import { useAhora } from '../../../hooks/use_ahora';
 import { useFlota } from '../../ambulances/hooks/use_ambulancias';
-import type { Ambulancia, EstadoOperativo } from '../../ambulances/types/ambulancia.types';
+import type { EstadoOperativo } from '../../ambulances/types/ambulancia.types';
+import { useIntervaloRespaldo } from '../../realtime/hooks/use_tiempo_real';
 import { useTurnosActivos } from '../hooks/use_turnos';
 import type { Turno } from '../types/turno.types';
 import { EsqueletoTurnos } from './esqueleto_turnos';
 import { TarjetaTurno } from './tarjeta_turno';
 
-export type AccionTurno =
-  | { tipo: 'iniciar'; ambulanciaId?: string }
-  | { tipo: 'tripulacion'; turno: Turno }
-  | { tipo: 'finalizar'; turno: Turno; estadoAmbulancia?: EstadoOperativo }
-  | { tipo: 'habilitar'; ambulancia: Ambulancia };
+/** Respaldo sin tiempo real: el estado de la ambulancia también cambia desde la app. */
+const INTERVALO_RESPALDO_MS = 15_000;
 
-export function TurnosActivos({
-  puedeArmarTripulacion,
-  alAccion,
-}: {
-  puedeArmarTripulacion: boolean;
-  alAccion: (accion: AccionTurno) => void;
-}) {
+export interface TurnoPorCerrar {
+  turno: Turno;
+  estadoAmbulancia?: EstadoOperativo;
+}
+
+export function TurnosActivos({ alCerrarTurno }: { alCerrarTurno: (seleccion: TurnoPorCerrar) => void }) {
   const ahora = useAhora();
   const turnos = useTurnosActivos();
   // Toda la flota, para mostrar el estado de cada ambulancia en su tarjeta.
-  const ambulancias = useFlota();
+  const ambulancias = useFlota(useIntervaloRespaldo(INTERVALO_RESPALDO_MS));
   const porId = new Map((ambulancias.data?.datos ?? []).map((ambulancia) => [ambulancia.id, ambulancia]));
 
   if (turnos.isPending) return <EsqueletoTurnos />;
@@ -43,9 +40,9 @@ export function TurnosActivos({
         <span className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-primario/8 text-primario">
           <CalendarClock aria-hidden strokeWidth={1.75} className="size-[22px]" />
         </span>
-        <p className="text-base font-semibold text-texto">Ninguna ambulancia tiene turno</p>
+        <p className="text-base font-semibold text-texto">Ninguna ambulancia tiene tripulación</p>
         <p className="mt-1 max-w-sm text-sm text-texto-secundario">
-          Una ambulancia necesita tripulación antes de quedar disponible para despacho.
+          El conductor y el paramédico seleccionan su ambulancia desde la app. Aquí aparecerán en cuanto lo hagan.
         </p>
       </div>
     );
@@ -61,11 +58,7 @@ export function TurnosActivos({
             turno={turno}
             ambulancia={ambulancia}
             ahora={ahora}
-            alCambiarTripulacion={puedeArmarTripulacion ? () => alAccion({ tipo: 'tripulacion', turno }) : undefined}
-            alHabilitar={ambulancia ? () => alAccion({ tipo: 'habilitar', ambulancia }) : undefined}
-            alFinalizar={() =>
-              alAccion({ tipo: 'finalizar', turno, estadoAmbulancia: ambulancia?.estadoOperativo })
-            }
+            alCerrarTurno={() => alCerrarTurno({ turno, estadoAmbulancia: ambulancia?.estadoOperativo })}
           />
         );
       })}

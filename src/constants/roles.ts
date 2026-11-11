@@ -5,4 +5,5 @@ export const ETIQUETAS_ROL: Record<NombreRol, string> = {
   despachador: 'Despachador',
   paramedico: 'Paramédico',
   conductor: 'Conductor',
+  ciudadano: 'Ciudadano',
 };
