@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 import { PantallaCarga } from '../components/states/pantalla_carga';
+import { entorno } from '../config/entorno';
 import { RUTAS } from '../constants/rutas';
 import { rutasAmbulancias } from '../features/ambulances/routes/rutas_ambulancias';
 import { rutasAsignaciones } from '../features/assignments/routes/rutas_asignaciones';
@@ -50,4 +51,4 @@ export const enrutador = createBrowserRouter([
       { path: '*', element: <Navigate to={RUTAS.inicio} replace /> },
     ],
   },
-]);
+], { basename: entorno.rutaBase || undefined });

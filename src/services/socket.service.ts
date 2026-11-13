@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+import { entorno } from '../config/entorno';
 
 const NAMESPACE = '/tiempo-real';
 
@@ -19,6 +20,7 @@ export interface ConexionTiempoReal {
 
 export function crearConexionTiempoReal(url: string, obtenerToken: () => string | null): ConexionTiempoReal {
   const socket = io(`${url}${NAMESPACE}`, {
+    path: entorno.rutaTiempoReal,
     // Se lee en cada intento para usar siempre el token vigente.
     auth: (enviar) => enviar({ token: obtenerToken() ?? '' }),
     transports: ['websocket'],

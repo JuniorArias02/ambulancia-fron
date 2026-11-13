@@ -21,6 +21,10 @@ export const entorno = {
   urlApi: leerRequerida('VITE_API_URL', import.meta.env.VITE_API_URL),
   /** Servidor WebSocket; vacío desactiva el tiempo real y quedan las consultas periódicas. */
   urlTiempoReal: import.meta.env.VITE_TIEMPO_REAL_URL?.trim().replace(/\/+$/, '') ?? '',
+  /** Ruta HTTP de Socket.IO; cambia cuando un proxy lo publica bajo una subcarpeta. */
+  rutaTiempoReal: import.meta.env.VITE_TIEMPO_REAL_RUTA?.trim() || '/socket.io',
+  /** Subcarpeta de publicación sin la barra final, para el enrutador ('' en la raíz). */
+  rutaBase: import.meta.env.BASE_URL.replace(/\/+$/, ''),
   claveGeoapify: import.meta.env.VITE_GEOAPIFY_API_KEY?.trim() ?? '',
   /** Ciudad que se propone al ubicar direcciones; el usuario puede cambiarla en el formulario. */
   ciudadOperacion: import.meta.env.VITE_CIUDAD_OPERACION?.trim() ?? '',
