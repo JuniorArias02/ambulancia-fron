@@ -32,4 +32,15 @@ describe('BarraLateral', () => {
     renderizar('despachador');
     expect(screen.queryByRole('link', { name: /Verificación de ciudadanos/ })).not.toBeInTheDocument();
   });
+
+  it('el despachador ve el inventario y el paramédico no', () => {
+    renderizar('despachador');
+    expect(screen.getByRole('link', { name: 'Movimientos' })).toHaveAttribute('href', RUTAS.movimientos);
+    expect(screen.getByRole('link', { name: 'Perfiles de dotación' })).toBeInTheDocument();
+  });
+
+  it('el paramédico no ve el inventario: lo opera desde la app', () => {
+    renderizar('paramedico');
+    expect(screen.queryByRole('link', { name: 'Movimientos' })).not.toBeInTheDocument();
+  });
 });

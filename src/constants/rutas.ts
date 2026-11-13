@@ -14,5 +14,13 @@ export const RUTAS = {
   detalleListaChequeo: '/listas-chequeo/:id',
   chequeosDiarios: '/chequeos-diarios',
   verificaciones: '/verificaciones-ciudadanos',
+  inventario: '/inventario',
+  existencias: '/inventario/existencias',
+  movimientos: '/inventario/movimientos',
+  catalogoInventario: '/inventario/catalogo',
+  bodegas: '/inventario/bodegas',
+  perfilesDotacion: '/inventario/perfiles-dotacion',
+  perfilDotacion: '/inventario/perfiles-dotacion/:id',
+  verificacionesInventario: '/inventario/verificaciones',
   detalleVerificacion: '/verificaciones-ciudadanos/:usuarioId',
 } as const;

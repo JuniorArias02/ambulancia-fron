@@ -3,6 +3,7 @@ import { PantallaCarga } from '../components/states/pantalla_carga';
 import { RUTAS } from '../constants/rutas';
 import { rutasAmbulancias } from '../features/ambulances/routes/rutas_ambulancias';
 import { rutasAsignaciones } from '../features/assignments/routes/rutas_asignaciones';
+import { rutasInventario } from '../features/inventory/routes/rutas_inventario';
 import { rutasListasChequeo } from '../features/checklists/routes/rutas_listas_chequeo';
 import { rutasAutenticacion } from '../features/authentication/routes/rutas_autenticacion';
 import { rutasEmergencias } from '../features/emergencies/routes/rutas_emergencias';
@@ -41,6 +42,7 @@ export const enrutador = createBrowserRouter([
               ...rutasUsuarios,
               ...rutasVerificaciones,
               ...rutasListasChequeo,
+              ...rutasInventario,
             ],
           },
         ],

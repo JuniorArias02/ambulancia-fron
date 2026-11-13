@@ -1,7 +1,13 @@
 import {
   Ambulance,
   CalendarClock,
+  ArrowLeftRight,
+  Boxes,
   ClipboardCheck,
+  Package,
+  PackageOpen,
+  SearchCheck,
+  Warehouse,
   ListChecks,
   Hospital,
   IdCard,
@@ -60,6 +66,19 @@ const GRUPOS_NAVEGACION: GrupoNavegacion[] = [
       { etiqueta: 'Tripulaciones', ruta: RUTAS.turnos, icono: CalendarClock },
       { etiqueta: 'Ambulancias', ruta: RUTAS.ambulancias, icono: Ambulance },
       { etiqueta: 'Chequeos diarios', ruta: RUTAS.chequeosDiarios, icono: ClipboardCheck },
+    ],
+  },
+  {
+    titulo: 'Inventario',
+    roles: ['administrador', 'despachador'],
+    elementos: [
+      { etiqueta: 'Resumen', ruta: RUTAS.inventario, icono: Package },
+      { etiqueta: 'Existencias', ruta: RUTAS.existencias, icono: Boxes },
+      { etiqueta: 'Movimientos', ruta: RUTAS.movimientos, icono: ArrowLeftRight },
+      { etiqueta: 'Verificaciones', ruta: RUTAS.verificacionesInventario, icono: SearchCheck },
+      { etiqueta: 'Catálogo', ruta: RUTAS.catalogoInventario, icono: PackageOpen },
+      { etiqueta: 'Bodegas', ruta: RUTAS.bodegas, icono: Warehouse },
+      { etiqueta: 'Perfiles de dotación', ruta: RUTAS.perfilesDotacion, icono: ListChecks },
     ],
   },
   {
@@ -157,8 +176,8 @@ export function BarraLateral({
                   <NavLink
                     key={ruta}
                     to={ruta}
-                    // El inicio es `/`: sin `end` quedaría activo en todas las rutas.
-                    end={ruta === RUTAS.inicio}
+                    // Rutas raíz: sin `end` quedarían activas en todas sus subrutas.
+                    end={ruta === RUTAS.inicio || ruta === RUTAS.inventario}
                     onClick={alCerrarMovil}
                     title={contraida ? (contador > 0 ? `${etiqueta} (${contador})` : etiqueta) : undefined}
                     className={({ isActive }) =>

@@ -5,6 +5,7 @@ import { BarraSuperior } from '../components/layout/barra_superior';
 import { AccesoRestringido } from '../components/states/acceso_restringido';
 import { useSesion } from '../features/authentication/hooks/use_sesion';
 import { usePendientesVerificacion } from '../features/citizen_verifications/hooks/use_verificaciones';
+import { usePendientesRevision } from '../features/inventory/hooks/use_consultas_inventario';
 import { IndicadorConexion } from '../features/realtime/components/indicador_conexion';
 import { ProveedorTiempoReal } from '../features/realtime/providers/proveedor_tiempo_real';
 import { useBarraLateral } from '../hooks/use_barra_lateral';
@@ -25,6 +26,8 @@ export function DisenoPrincipal() {
   const alSesionInvalida = useCallback(() => finalizarSesionLocal('no_autorizado'), [finalizarSesionLocal]);
   // Solo el administrador revisa identidades; para los demás roles no se consulta.
   const pendientes = usePendientesVerificacion(usuario?.rol === 'administrador');
+  // El inventario lo revisan el administrador y el despachador.
+  const novedadesInventario = usePendientesRevision(usuario?.rol === 'administrador' || usuario?.rol === 'despachador');
 
   if (!usuario) return null;
 
@@ -50,7 +53,7 @@ export function DisenoPrincipal() {
           <div className="pointer-events-auto contents">
             <BarraLateral
               rolUsuario={usuario.rol}
-              contadores={{ [RUTAS.verificaciones]: pendientes.data }}
+              contadores={{ [RUTAS.verificaciones]: pendientes.data, [RUTAS.verificacionesInventario]: novedadesInventario.data }}
               contraida={barraLateral.contraida}
               abiertaMovil={barraLateral.abiertaMovil}
               alAlternarContraccion={barraLateral.alternarContraccion}
