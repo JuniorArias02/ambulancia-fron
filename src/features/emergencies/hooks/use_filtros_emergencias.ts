@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
+import { MODALIDADES_SERVICIO } from '../../../constants/modalidades_servicio';
 import { ESTADOS_EMERGENCIA, PRIORIDADES, TIPOS_INCIDENTE } from '../constants/catalogos_emergencia';
 import { LIMITE_POR_PAGINA } from '../constants/emergencias';
 import type { FiltrosEmergencias } from '../types/emergencia.types';
@@ -37,6 +38,7 @@ export function useFiltrosEmergencias() {
       soloActivas: enHistorial ? undefined : true,
       prioridad: deCatalogo(PRIORIDADES, parametros.get('prioridad')),
       tipoIncidente: deCatalogo(TIPOS_INCIDENTE, parametros.get('tipoIncidente')),
+      modalidad: deCatalogo(MODALIDADES_SERVICIO, parametros.get('modalidad')),
       desde: enHistorial && desde && esDiaValido(desde) ? desde : undefined,
       hasta: enHistorial && hasta && esDiaValido(hasta) ? hasta : undefined,
       pagina: Number.isInteger(pagina) && pagina >= 1 ? pagina : 1,
@@ -76,6 +78,7 @@ export function useFiltrosEmergencias() {
       filtros.estado ||
       filtros.prioridad ||
       filtros.tipoIncidente ||
+      filtros.modalidad ||
       filtros.desde ||
       filtros.hasta,
   );
@@ -87,6 +90,7 @@ export function useFiltrosEmergencias() {
         estado: undefined,
         prioridad: undefined,
         tipoIncidente: undefined,
+        modalidad: undefined,
         desde: undefined,
         hasta: undefined,
       }),

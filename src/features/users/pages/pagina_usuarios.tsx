@@ -8,7 +8,9 @@ import { useSesion } from '../../authentication/hooks/use_sesion';
 import { BarraFiltrosUsuarios } from '../components/barra_filtros_usuarios';
 import { DialogoCambiarEstado } from '../components/dialogo_cambiar_estado';
 import { DialogoCambiarRol } from '../components/dialogo_cambiar_rol';
+import { DialogoRestablecerContrasena } from '../components/dialogo_restablecer_contrasena';
 import { EsqueletoUsuarios } from '../components/esqueleto_usuarios';
+import { PanelFirmaUsuario } from '../components/panel_firma_usuario';
 import { PanelUsuario } from '../components/panel_usuario';
 import { TablaUsuarios } from '../components/tabla_usuarios';
 import { useFiltrosUsuarios } from '../hooks/use_filtros_usuarios';
@@ -19,6 +21,8 @@ type AccionActiva =
   | { tipo: 'crear' }
   | { tipo: 'editar'; usuario: Usuario }
   | { tipo: 'rol'; usuario: Usuario }
+  | { tipo: 'contrasena'; usuario: Usuario }
+  | { tipo: 'firma'; usuario: Usuario }
   | { tipo: 'estado'; usuario: Usuario; estado: EstadoUsuario };
 
 interface PropiedadesEstadoVacio {
@@ -126,6 +130,8 @@ export function PaginaUsuarios() {
                 idUsuarioActual={usuarioActual?.id ?? ''}
                 alEditar={(usuario) => setAccion({ tipo: 'editar', usuario })}
                 alCambiarRol={(usuario) => setAccion({ tipo: 'rol', usuario })}
+                alRestablecerContrasena={(usuario) => setAccion({ tipo: 'contrasena', usuario })}
+                alVerFirma={(usuario) => setAccion({ tipo: 'firma', usuario })}
                 alVerVerificacion={(usuario) =>
                   void navegar(generatePath(RUTAS.detalleVerificacion, { usuarioId: usuario.id }))
                 }
@@ -148,6 +154,10 @@ export function PaginaUsuarios() {
       {accion?.tipo === 'crear' && <PanelUsuario usuario={null} alCerrar={cerrarAccion} />}
       {accion?.tipo === 'editar' && <PanelUsuario usuario={accion.usuario} alCerrar={cerrarAccion} />}
       {accion?.tipo === 'rol' && <DialogoCambiarRol usuario={accion.usuario} alCerrar={cerrarAccion} />}
+      {accion?.tipo === 'firma' && <PanelFirmaUsuario usuario={accion.usuario} alCerrar={cerrarAccion} />}
+      {accion?.tipo === 'contrasena' && (
+        <DialogoRestablecerContrasena usuario={accion.usuario} alCerrar={cerrarAccion} />
+      )}
       {accion?.tipo === 'estado' && (
         <DialogoCambiarEstado
           usuario={accion.usuario}

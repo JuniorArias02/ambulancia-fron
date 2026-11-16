@@ -1,3 +1,4 @@
+import { MODALIDAD_POR_DEFECTO } from '../../../constants/modalidades_servicio';
 import type { EntradaEmergencia, FormularioEmergencia } from '../schemas/emergencia.schema';
 import type {
   DatosActualizarEmergencia,
@@ -14,6 +15,7 @@ export function valoresFormulario(emergencia: Emergencia | null): EntradaEmergen
     informanteTelefono: emergencia?.informanteTelefono ?? '',
     tipoIncidente: emergencia?.tipoIncidente ?? '',
     prioridad: emergencia?.prioridad ?? '',
+    modalidad: emergencia?.modalidad ?? MODALIDAD_POR_DEFECTO,
     direccion: emergencia?.direccion ?? '',
     referenciaLugar: emergencia?.referenciaLugar ?? '',
     latitud: emergencia?.coordenadas ? String(emergencia.coordenadas.latitud) : '',
@@ -28,6 +30,7 @@ export function construirDatosCreacion(formulario: FormularioEmergencia): DatosC
   const datos: DatosCrearEmergencia = {
     fuente: formulario.fuente,
     descripcion: formulario.descripcion,
+    modalidad: formulario.modalidad,
   };
   if (formulario.informanteNombre !== null) datos.informanteNombre = formulario.informanteNombre;
   if (formulario.informanteTelefono !== null) datos.informanteTelefono = formulario.informanteTelefono;
@@ -62,6 +65,7 @@ export function construirCambiosEmergencia(
   }
   if (formulario.tipoIncidente !== original.tipoIncidente) cambios.tipoIncidente = formulario.tipoIncidente;
   if (formulario.prioridad !== original.prioridad) cambios.prioridad = formulario.prioridad;
+  if (formulario.modalidad !== original.modalidad) cambios.modalidad = formulario.modalidad;
   if (formulario.direccion !== original.direccion) cambios.direccion = formulario.direccion;
   if (formulario.referenciaLugar !== original.referenciaLugar) {
     cambios.referenciaLugar = formulario.referenciaLugar;

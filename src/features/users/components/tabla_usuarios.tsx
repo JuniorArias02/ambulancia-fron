@@ -1,4 +1,4 @@
-import { Ban, CircleCheck, CircleSlash, IdCard, Pencil, UserCog, type LucideIcon } from 'lucide-react';
+import { Ban, CircleCheck, CircleSlash, IdCard, KeyRound, Pencil, Signature, UserCog, type LucideIcon } from 'lucide-react';
 import { MenuAcciones, type AccionMenu } from '../../../components/ui/menu_acciones';
 import { formatearFechaHora } from '../../../utils/formato_fecha';
 import { obtenerIniciales } from '../../../utils/iniciales';
@@ -18,6 +18,8 @@ export interface AccionesUsuario {
   alCambiarRol: (usuario: Usuario) => void;
   alCambiarEstado: (usuario: Usuario, estado: EstadoUsuario) => void;
   alVerVerificacion: (usuario: Usuario) => void;
+  alRestablecerContrasena: (usuario: Usuario) => void;
+  alVerFirma: (usuario: Usuario) => void;
 }
 
 interface PropiedadesTablaUsuarios extends AccionesUsuario {
@@ -28,7 +30,7 @@ interface PropiedadesTablaUsuarios extends AccionesUsuario {
 function construirAcciones(
   usuario: Usuario,
   esUsuarioActual: boolean,
-  { alEditar, alCambiarRol, alCambiarEstado, alVerVerificacion }: AccionesUsuario,
+  { alEditar, alCambiarRol, alCambiarEstado, alVerVerificacion, alRestablecerContrasena, alVerFirma }: AccionesUsuario,
 ): AccionMenu[] {
   const esCiudadano = usuario.rol === 'ciudadano';
   const acciones: AccionMenu[] = [
@@ -37,13 +39,23 @@ function construirAcciones(
   if (esCiudadano) {
     acciones.unshift({ etiqueta: 'Ver verificación', icono: IdCard, alSeleccionar: () => alVerVerificacion(usuario) });
   }
-  // El backend no permite cambiar el estado propio ni quitarse el rol de administrador.
+  // Solo el paramédico firma las historias clínicas que cierra.
+  if (usuario.rol === 'paramedico') {
+    acciones.push({ etiqueta: 'Ver firma', icono: Signature, alSeleccionar: () => alVerFirma(usuario) });
+  }
+  // El backend no permite cambiar el estado propio, quitarse el rol de administrador ni
+  // restablecer la contraseña propia (eso se hace desde el perfil, con la contraseña actual).
   if (esUsuarioActual) return acciones;
 
   // Un ciudadano no puede pasar a ser personal: el backend responde 422.
   if (!esCiudadano) {
     acciones.push({ etiqueta: 'Cambiar rol', icono: UserCog, alSeleccionar: () => alCambiarRol(usuario) });
   }
+  acciones.push({
+    etiqueta: 'Restablecer contraseña',
+    icono: KeyRound,
+    alSeleccionar: () => alRestablecerContrasena(usuario),
+  });
   for (const estado of ESTADOS_USUARIO) {
     if (estado === usuario.estado) continue;
     acciones.push({

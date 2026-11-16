@@ -25,8 +25,7 @@ async function abrirMenu(datos: Ambulancia, acciones: Omit<AccionesAmbulancia, '
   const [boton] = screen.getAllByRole('button', { name: `Acciones para ${datos.codigo}` });
   if (!boton) throw new Error('No se encontró el menú de acciones');
   await userEvent.click(boton);
-  const menu = boton.nextElementSibling;
-  if (!(menu instanceof HTMLElement)) throw new Error('El menú no se abrió');
+  const menu = screen.getByRole('menu');
   return within(menu);
 }
 
@@ -43,8 +42,8 @@ describe('TablaAmbulancias', () => {
   it('sin permiso de edición no ofrece editar', async () => {
     const menu = await abrirMenu(ambulancia, { alCambiarEstado: vi.fn() });
 
-    expect(menu.getByRole('button', { name: 'Cambiar estado' })).toBeInTheDocument();
-    expect(menu.queryByRole('button', { name: 'Editar datos' })).not.toBeInTheDocument();
+    expect(menu.getByRole('menuitem', { name: 'Cambiar estado' })).toBeInTheDocument();
+    expect(menu.queryByRole('menuitem', { name: 'Editar datos' })).not.toBeInTheDocument();
   });
 
   it('una ambulancia en servicio solo permite ver el detalle', async () => {
@@ -53,6 +52,6 @@ describe('TablaAmbulancias', () => {
       { alCambiarEstado: vi.fn(), alEditar: vi.fn() },
     );
 
-    expect(menu.getAllByRole('button').map((boton) => boton.textContent)).toEqual(['Ver detalle']);
+    expect(menu.getAllByRole('menuitem').map((boton) => boton.textContent)).toEqual(['Ver detalle']);
   });
 });

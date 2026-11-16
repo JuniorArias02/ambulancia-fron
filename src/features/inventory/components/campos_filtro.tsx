@@ -1,8 +1,6 @@
 import { Search } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
-import { SelectorBuscable } from '../../../components/forms/selector_buscable';
 import { claseControlFiltro } from '../../../components/forms/selector_filtro';
-import type { OpcionBuscable } from '../../../utils/opciones_buscables';
 import { useValorRetrasado } from '../../../hooks/use_valor_retrasado';
 
 const RETRASO_BUSQUEDA_MS = 350;
@@ -72,31 +70,6 @@ export function BarraFiltros({ children }: { children: ReactNode }) {
   return (
     <div role="search" className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
       {children}
-    </div>
-  );
-}
-
-interface PropiedadesFiltroBuscable {
-  etiqueta: string;
-  valor: string | undefined;
-  opciones: readonly OpcionBuscable[];
-  /** Texto de la opción que quita el filtro. */
-  textoTodos: string;
-  alCambiar: (valor: string | undefined) => void;
-}
-
-/** Filtro para listas largas (insumos, ubicaciones): se escribe para encontrar la opción. */
-export function FiltroBuscable({ etiqueta, valor, opciones, textoTodos, alCambiar }: PropiedadesFiltroBuscable) {
-  return (
-    <div className="relative w-full sm:w-56">
-      <SelectorBuscable
-        etiqueta={etiqueta}
-        opciones={[{ valor: '', texto: textoTodos }, ...opciones]}
-        valor={valor ?? ''}
-        alCambiar={(nuevo) => alCambiar(nuevo || undefined)}
-        placeholder={textoTodos}
-        claseEntrada={`${claseControlFiltro} w-full pl-3 placeholder:text-texto`}
-      />
     </div>
   );
 }

@@ -10,6 +10,9 @@ interface PropiedadesCampoContrasena extends PropiedadesEntrada {
   etiqueta: string;
   error?: string;
   ayuda?: string;
+  /** Controla desde fuera si se ve el texto; sin esta prop el campo maneja su propio estado. */
+  visible?: boolean;
+  alCambiarVisibilidad?: (visible: boolean) => void;
 }
 
 /** Campo de contraseña con opción de mostrarla y aviso de Bloq Mayús. */
@@ -20,9 +23,16 @@ export function CampoContrasena({
   ayuda,
   onKeyDown,
   onKeyUp,
+  visible: visibleControlado,
+  alCambiarVisibilidad,
   ...propiedadesEntrada
 }: PropiedadesCampoContrasena) {
-  const [visible, setVisible] = useState(false);
+  const [visibleInterno, setVisibleInterno] = useState(false);
+  const visible = visibleControlado ?? visibleInterno;
+  const alternarVisibilidad = () => {
+    setVisibleInterno(!visible);
+    alCambiarVisibilidad?.(!visible);
+  };
   const [mayusculasActivas, setMayusculasActivas] = useState(false);
   const etiquetaVisibilidad = visible ? 'Ocultar contraseña' : 'Mostrar contraseña';
 
@@ -63,7 +73,7 @@ export function CampoContrasena({
       />
       <button
         type="button"
-        onClick={() => setVisible((actual) => !actual)}
+        onClick={alternarVisibilidad}
         aria-label={etiquetaVisibilidad}
         title={etiquetaVisibilidad}
         className="absolute inset-y-1.5 right-1.5 flex w-9 items-center justify-center rounded-lg text-texto-secundario transition-colors duration-150 hover:bg-primario/8 hover:text-primario focus-visible:ring-2 focus-visible:ring-primario/40 focus-visible:outline-none"

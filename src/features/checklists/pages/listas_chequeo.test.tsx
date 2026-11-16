@@ -127,7 +127,7 @@ describe('PaginaListasChequeo', () => {
     const [menu] = await screen.findAllByRole('button', { name: 'Acciones para Chequeo diario' });
     if (!menu) throw new Error('Sin menú');
     await userEvent.click(menu);
-    await userEvent.click(screen.getByRole('button', { name: 'Activar' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Activar' }));
 
     const dialogo = within(screen.getByRole('dialog', { name: 'Activar lista' }));
     expect(dialogo.getByText(/La lista activa actual dejará de usarse/)).toBeInTheDocument();

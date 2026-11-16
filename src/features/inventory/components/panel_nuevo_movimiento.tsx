@@ -14,7 +14,8 @@ interface PropiedadesPanelNuevoMovimiento {
 
 export function PanelNuevoMovimiento({ inicial, titulo = 'Nuevo movimiento', alRegistrar, alCerrar }: PropiedadesPanelNuevoMovimiento) {
   return (
-    <PanelEdicion titulo={titulo} descripcion="Entradas, transferencias, ajustes y bajas." alCerrar={alCerrar}>
+    // Centrado y ancho: los nombres de insumos, lotes y ubicaciones suelen ser largos.
+    <PanelEdicion titulo={titulo} descripcion="Entradas, transferencias, ajustes y bajas." variante="amplio" alCerrar={alCerrar}>
       {({ alCambiarSinGuardar, solicitarCierre }) => (
         <FormularioMovimiento
           inicial={inicial}

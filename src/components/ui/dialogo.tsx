@@ -5,7 +5,8 @@ interface PropiedadesDialogo {
   abierto: boolean;
   titulo: string;
   descripcion?: ReactNode;
-  variante?: 'centrado' | 'lateral';
+  /** `amplio`: centrado y ancho, para formularios con tablas o textos largos. */
+  variante?: 'centrado' | 'amplio' | 'lateral';
   /** Mientras sea false, el diálogo no se puede cerrar (p. ej. durante un envío). */
   cerrable?: boolean;
   alCerrar: () => void;
@@ -14,6 +15,7 @@ interface PropiedadesDialogo {
 
 const CLASES_VARIANTE = {
   centrado: 'm-auto w-[min(520px,calc(100vw-32px))] rounded-3xl',
+  amplio: 'm-auto w-[min(1080px,calc(100vw-32px))] rounded-3xl',
   lateral:
     'my-3 mr-3 ml-auto h-[calc(100dvh-24px)] max-h-none w-[min(520px,calc(100vw-24px))] rounded-3xl',
 };

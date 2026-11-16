@@ -11,6 +11,7 @@ const emergencia = (id: string, cambios: Partial<Emergencia>): Emergencia => ({
   descripcion: 'Descripción',
   tipoIncidente: null,
   prioridad: null,
+  modalidad: 'emergencia',
   direccion: 'Calle 1',
   referenciaLugar: null,
   coordenadas: null,

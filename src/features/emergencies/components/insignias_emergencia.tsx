@@ -1,4 +1,5 @@
 import { BadgeCheck, LocateFixed, MousePointerClick } from 'lucide-react';
+import { ETIQUETAS_MODALIDAD, ICONOS_MODALIDAD, type ModalidadServicio } from '../../../constants/modalidades_servicio';
 import {
   DESCRIPCIONES_PRIORIDAD,
   ETIQUETAS_ORIGEN_UBICACION,
@@ -31,6 +32,18 @@ export function InsigniaPrioridad({ prioridad, detallada = false }: PropiedadesI
       ) : (
         'Sin clasificar'
       )}
+    </span>
+  );
+}
+
+/** Tipo de servicio (no el tipo de ambulancia); neutra para no competir con la prioridad. */
+export function InsigniaModalidad({ modalidad }: { modalidad: ModalidadServicio }) {
+  const Icono = ICONOS_MODALIDAD[modalidad];
+  return (
+    <span className={`${claseInsignia} bg-white/70 text-texto ring-1 ring-borde/80`}>
+      <Icono aria-hidden strokeWidth={2} className="size-3.5 text-texto-secundario" />
+      <span className="sr-only">Tipo de servicio: </span>
+      {ETIQUETAS_MODALIDAD[modalidad]}
     </span>
   );
 }

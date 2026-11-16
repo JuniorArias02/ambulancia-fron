@@ -56,7 +56,7 @@ function opcionExistencia(existencia: Existencia, bloquearNoUtilizables: boolean
 
 function Cantidad({ indice, registro, error, unidad, deshabilitada }: { indice: number; registro: UseFormRegisterReturn; error?: string; unidad?: string; deshabilitada: boolean }) {
   return (
-    <div className="w-full sm:w-36">
+    <div className="w-full sm:w-40">
       <div className="relative">
         <input
           aria-label={`Cantidad de la línea ${indice + 1}`}
@@ -128,7 +128,7 @@ export function LineaDesdeOrigen({
   const sinExistencias = !cargando && opciones.length === 0;
 
   return (
-    <li className="flex flex-col gap-2 rounded-2xl border border-borde/80 bg-white/50 p-3 sm:flex-row sm:items-start">
+    <li className="flex flex-col gap-2 rounded-2xl border border-borde/80 bg-white/50 p-3 md:flex-row md:items-start">
       <div className="min-w-0 flex-1">
         <div className="relative">
           <SelectorBuscable
@@ -186,8 +186,8 @@ export function LineaSinOrigen({
   );
 
   return (
-    <li className="flex flex-col gap-2 rounded-2xl border border-borde/80 bg-white/50 p-3 lg:flex-row lg:items-start">
-      <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-2">
+    <li className="flex flex-col gap-2 rounded-2xl border border-borde/80 bg-white/50 p-3 md:flex-row md:items-start">
+      <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <div className="relative min-w-0">
           <SelectorBuscable
             etiqueta={`Insumo de la línea ${indice + 1}`}

@@ -14,6 +14,7 @@ const base: Emergencia = {
   descripcion: 'Persona caída en la vía',
   tipoIncidente: 'caida',
   prioridad: 'roja',
+  modalidad: 'emergencia',
   direccion: 'Carrera 7 # 45-10',
   referenciaLugar: null,
   coordenadas: null,
@@ -43,10 +44,9 @@ async function accionesPara(estado: EstadoEmergencia): Promise<(string | null)[]
   const [boton] = screen.getAllByRole('button', { name: `Acciones para ${base.numeroEmergencia}` });
   if (!boton) throw new Error('No se encontró el menú de acciones');
   await userEvent.click(boton);
-  const menu = boton.nextElementSibling;
-  if (!(menu instanceof HTMLElement)) throw new Error('El menú no se abrió');
+  const menu = screen.getByRole('menu');
   return within(menu)
-    .getAllByRole('button')
+    .getAllByRole('menuitem')
     .map((opcion) => opcion.textContent);
 }
 

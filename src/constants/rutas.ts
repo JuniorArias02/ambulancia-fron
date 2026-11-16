@@ -22,5 +22,11 @@ export const RUTAS = {
   perfilesDotacion: '/inventario/perfiles-dotacion',
   perfilDotacion: '/inventario/perfiles-dotacion/:id',
   verificacionesInventario: '/inventario/verificaciones',
+  historiasClinicas: '/historias-clinicas',
+  expediente: '/historias-clinicas/:id',
+  ingreso: '/ingresos/:numero',
+  pacientes: '/pacientes',
+  fichaPaciente: '/pacientes/:id',
+  indicadoresClinicos: '/indicadores-clinicos',
   detalleVerificacion: '/verificaciones-ciudadanos/:usuarioId',
 } as const;

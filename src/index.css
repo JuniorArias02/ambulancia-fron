@@ -159,6 +159,17 @@ body {
   box-shadow: none;
 }
 
+/* Solo opacidad: un `transform` alteraría la medición con la que se ubica el menú. */
+@utility animar-menu {
+  animation: entrada-menu 120ms ease-out;
+}
+
+@keyframes entrada-menu {
+  from {
+    opacity: 0;
+  }
+}
+
 @keyframes entrada-popup {
   from {
     opacity: 0;
@@ -167,7 +178,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .popup-vidrio .leaflet-popup-content-wrapper {
+  .popup-vidrio .leaflet-popup-content-wrapper,
+  .animar-menu {
     animation: none;
   }
 }

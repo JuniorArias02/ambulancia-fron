@@ -207,11 +207,11 @@ export function SelectorBuscable({
                   onMouseEnter={() => setActivo(indice)}
                   onClick={() => elegir(opcion)}
                   className={`flex cursor-pointer items-start gap-2 rounded-lg px-3 py-2 text-sm ${
-                    opcion.deshabilitada ? 'cursor-not-allowed opacity-50' : resaltada ? 'bg-primario/8' : ''
+                    opcion.deshabilitada ? 'cursor-not-allowed opacity-50' : resaltada ? 'bg-primario/10' : ''
                   }`}
                 >
                   <span className="min-w-0 flex-1">
-                    <span className={`block ${marcada ? 'font-semibold text-primario' : 'text-texto'}`}>{opcion.texto}</span>
+                    <span className={`block ${marcada ? 'font-semibold text-primario' : resaltada ? 'text-primario' : 'text-texto'}`}>{opcion.texto}</span>
                     {opcion.detalle && <span className="block text-xs text-texto-secundario">{opcion.detalle}</span>}
                   </span>
                   {marcada && <Check aria-hidden strokeWidth={2} className="mt-0.5 size-4 shrink-0 text-primario" />}

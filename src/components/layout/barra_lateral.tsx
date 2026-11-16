@@ -1,6 +1,9 @@
 import {
   Ambulance,
   CalendarClock,
+  FileText,
+  ChartColumn,
+  Contact,
   ArrowLeftRight,
   Boxes,
   ClipboardCheck,
@@ -84,6 +87,16 @@ const GRUPOS_NAVEGACION: GrupoNavegacion[] = [
   {
     titulo: 'Red de salud',
     elementos: [{ etiqueta: 'Instituciones', ruta: RUTAS.instituciones, icono: Hospital }],
+  },
+  {
+    // Solo lectura y auditado: cada búsqueda y cada consulta quedan registradas en el backend.
+    titulo: 'Historias clínicas',
+    roles: ['administrador'],
+    elementos: [
+      { etiqueta: 'Buscar historias', ruta: RUTAS.historiasClinicas, icono: FileText },
+      { etiqueta: 'Pacientes', ruta: RUTAS.pacientes, icono: Contact },
+      { etiqueta: 'Indicadores', ruta: RUTAS.indicadoresClinicos, icono: ChartColumn },
+    ],
   },
   {
     titulo: 'Administración',

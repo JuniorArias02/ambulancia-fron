@@ -7,6 +7,7 @@ import {
   textoOpcional,
   validarCoordenadasJuntas,
 } from '../../../schemas/campos.schema';
+import { MODALIDADES_SERVICIO } from '../../../constants/modalidades_servicio';
 import { FUENTES, PRIORIDADES, TIPOS_INCIDENTE } from '../constants/catalogos_emergencia';
 
 export const LONGITUD_MAXIMA_DESCRIPCION = 5000;
@@ -26,6 +27,7 @@ export const esquemaEmergencia = z
     informanteTelefono: telefonoOpcional(),
     tipoIncidente: catalogoOpcional(TIPOS_INCIDENTE),
     prioridad: catalogoOpcional(PRIORIDADES),
+    modalidad: z.enum(MODALIDADES_SERVICIO, { message: 'Selecciona el tipo de servicio.' }),
     direccion: textoOpcional(255),
     referenciaLugar: textoOpcional(255),
     latitud: latitud(),

@@ -11,6 +11,7 @@ import { DatosEmergencia } from '../components/datos_emergencia';
 import { DialogoCancelarEmergencia } from '../components/dialogo_cancelar_emergencia';
 import {
   InsigniaEstadoEmergencia,
+  InsigniaModalidad,
   InsigniaPrioridad,
   InsigniaReporteCiudadano,
 } from '../components/insignias_emergencia';
@@ -98,6 +99,7 @@ export function PaginaDetalleEmergencia() {
                 {emergencia.numeroEmergencia}
               </h2>
               <InsigniaPrioridad prioridad={emergencia.prioridad} detallada />
+              <InsigniaModalidad modalidad={emergencia.modalidad} />
               <InsigniaEstadoEmergencia estado={emergencia.estado} />
               {emergencia.informanteUsuarioId && <InsigniaReporteCiudadano />}
               {consulta.isFetching && (

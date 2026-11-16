@@ -16,7 +16,8 @@ import { registrarControl } from '../services/bodegas.service';
 import type { ControlAlmacenamiento, UbicacionInventario } from '../types/inventario.types';
 import { leerPagina } from '../utils/formato_inventario';
 import { opcionesUbicaciones } from '../utils/opciones_inventario';
-import { BarraFiltros, CampoDia, FiltroBuscable } from './campos_filtro';
+import { BarraFiltros, CampoDia } from './campos_filtro';
+import { FiltroBuscable } from '../../../components/forms/filtro_buscable';
 import { ListadoInventario } from './listado_inventario';
 import type { Columna } from './tabla_inventario';
 

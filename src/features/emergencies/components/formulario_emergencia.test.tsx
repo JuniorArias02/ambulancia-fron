@@ -68,6 +68,7 @@ describe('FormularioEmergencia · registrar', () => {
       fuente: 'radio',
       descripcion: 'Persona caída en la vía',
       prioridad: 'roja',
+      modalidad: 'emergencia',
       direccion: 'Carrera 7 # 45-10',
     });
   });

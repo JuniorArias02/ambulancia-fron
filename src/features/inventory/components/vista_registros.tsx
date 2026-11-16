@@ -9,7 +9,8 @@ import type { EstadoRegistroSanitario, RegistroSanitario } from '../types/invent
 import { deCatalogo, formatearDia, leerPagina } from '../utils/formato_inventario';
 import { BarraHerramientas } from './barra_herramientas';
 import { opcionesInsumos } from '../utils/opciones_inventario';
-import { BarraFiltros, CampoDia, FiltroBuscable } from './campos_filtro';
+import { BarraFiltros, CampoDia } from './campos_filtro';
+import { FiltroBuscable } from '../../../components/forms/filtro_buscable';
 import { FormularioRegistro } from './formulario_registro';
 import { Insignia } from './insignia';
 import { ListadoInventario } from './listado_inventario';

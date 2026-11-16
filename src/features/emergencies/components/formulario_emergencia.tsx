@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Phone, Radio, Save, Siren, Tag, TriangleAlert, UserRound, UsersRound } from 'lucide-react';
+import { ClipboardList, Phone, Radio, Save, Siren, Tag, TriangleAlert, UserRound, UsersRound } from 'lucide-react';
 import { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { AlertaError } from '../../../components/feedback/alerta_error';
@@ -7,6 +7,7 @@ import { CampoMotivo } from '../../../components/forms/campo_motivo';
 import { CampoSelector } from '../../../components/forms/campo_selector';
 import { CampoTexto } from '../../../components/forms/campo_texto';
 import { PieFormulario } from '../../../components/forms/pie_formulario';
+import { ETIQUETAS_MODALIDAD, MODALIDADES_SERVICIO } from '../../../constants/modalidades_servicio';
 import { useNotificaciones } from '../../../hooks/use_notificaciones';
 import {
   esActiva,
@@ -148,6 +149,21 @@ export function FormularioEmergencia({
               {TIPOS_INCIDENTE.map((tipo) => (
                 <option key={tipo} value={tipo}>
                   {ETIQUETAS_TIPO_INCIDENTE[tipo]}
+                </option>
+              ))}
+            </CampoSelector>
+            <CampoSelector
+              id="modalidad"
+              etiqueta="Tipo de servicio"
+              icono={ClipboardList}
+              disabled={bloqueado}
+              error={errors.modalidad?.message}
+              ayuda="Define las firmas que pedirá la historia clínica. No es el tipo de ambulancia."
+              {...register('modalidad')}
+            >
+              {MODALIDADES_SERVICIO.map((modalidad) => (
+                <option key={modalidad} value={modalidad}>
+                  {ETIQUETAS_MODALIDAD[modalidad]}
                 </option>
               ))}
             </CampoSelector>

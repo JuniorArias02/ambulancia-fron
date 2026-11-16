@@ -7,7 +7,8 @@ import { esActiva, ETIQUETAS_TIPO_INCIDENTE } from '../constants/catalogos_emerg
 import { ESTILO_SIN_PRIORIDAD, ESTILOS_PRIORIDAD } from '../constants/estilos_emergencia';
 import type { Emergencia } from '../types/emergencia.types';
 import { tiempoTranscurrido } from '../../../utils/tiempo_transcurrido';
-import { InsigniaEstadoEmergencia, InsigniaPrioridad, InsigniaReporteCiudadano } from './insignias_emergencia';
+import { ETIQUETAS_MODALIDAD } from '../../../constants/modalidades_servicio';
+import { InsigniaEstadoEmergencia, InsigniaModalidad, InsigniaPrioridad, InsigniaReporteCiudadano } from './insignias_emergencia';
 
 export interface AccionesEmergencia {
   alVerDetalle: (emergencia: Emergencia) => void;
@@ -128,6 +129,10 @@ export function TablaEmergencias({ emergencias, mostrarTranscurrido, ahora, ...a
                 </td>
                 <td className="px-4 py-3">
                   <InsigniaPrioridad prioridad={emergencia.prioridad} />
+                  <p className="mt-1 text-xs whitespace-nowrap text-texto-secundario">
+                    <span className="sr-only">Tipo de servicio: </span>
+                    {ETIQUETAS_MODALIDAD[emergencia.modalidad]}
+                  </p>
                 </td>
                 <td className="hidden truncate px-4 py-3 text-sm text-texto xl:table-cell">
                   {emergencia.tipoIncidente ? ETIQUETAS_TIPO_INCIDENTE[emergencia.tipoIncidente] : (
@@ -167,6 +172,7 @@ export function TablaEmergencias({ emergencias, mostrarTranscurrido, ahora, ...a
                 <IdentidadEmergencia emergencia={emergencia} />
                 <div className="flex flex-wrap items-center gap-2">
                   <InsigniaPrioridad prioridad={emergencia.prioridad} />
+                  <InsigniaModalidad modalidad={emergencia.modalidad} />
                   <InsigniaEstadoEmergencia estado={emergencia.estado} />
                 </div>
                 <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-texto-secundario">

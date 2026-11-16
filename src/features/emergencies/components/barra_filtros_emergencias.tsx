@@ -1,3 +1,4 @@
+import { ETIQUETAS_MODALIDAD, MODALIDADES_SERVICIO } from '../../../constants/modalidades_servicio';
 import { Search, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { claseControlFiltro, SelectorFiltro } from '../../../components/forms/selector_filtro';
@@ -14,6 +15,8 @@ import type { CambiosFiltrosEmergencias, VistaEmergencias } from '../hooks/use_f
 import type { FiltrosEmergencias } from '../types/emergencia.types';
 
 const RETRASO_BUSQUEDA_MS = 350;
+
+const OPCIONES_MODALIDAD = MODALIDADES_SERVICIO.map((modalidad) => ({ valor: modalidad, texto: ETIQUETAS_MODALIDAD[modalidad] }));
 
 const OPCIONES_PRIORIDAD = PRIORIDADES.map((prioridad) => ({
   valor: prioridad,
@@ -112,6 +115,13 @@ export function BarraFiltrosEmergencias({
             opciones={OPCIONES_TIPO}
             textoTodos="Todos los tipos"
             alCambiar={(tipoIncidente) => alCambiar({ tipoIncidente })}
+          />
+          <SelectorFiltro
+            etiqueta="Filtrar por tipo de servicio"
+            valor={filtros.modalidad}
+            opciones={OPCIONES_MODALIDAD}
+            textoTodos="Todo servicio"
+            alCambiar={(modalidad) => alCambiar({ modalidad })}
           />
           {vista === 'historial' && (
             <SelectorFiltro

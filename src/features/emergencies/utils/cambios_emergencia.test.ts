@@ -12,6 +12,7 @@ const emergencia: Emergencia = {
   descripcion: 'Choque entre moto y carro',
   tipoIncidente: 'accidente_transito',
   prioridad: 'amarilla',
+  modalidad: 'emergencia',
   direccion: 'Calle 72 # 15-20',
   referenciaLugar: null,
   coordenadas: { latitud: 4.6582, longitud: -74.0571 },
@@ -68,7 +69,21 @@ describe('construirDatosCreacion', () => {
     expect(construirDatosCreacion(formulario)).toEqual({
       fuente: 'radio',
       descripcion: 'Persona caída en la vía',
+      modalidad: 'emergencia',
       direccion: 'Carrera 7 # 45-10',
     });
+  });
+});
+
+describe('modalidad', () => {
+  it('una emergencia nueva es "Emergencia" por defecto', () => {
+    expect(valoresFormulario(null).modalidad).toBe('emergencia');
+  });
+
+  it('el PATCH solo la envía si cambió, nunca en null', () => {
+    const formulario = esquemaEmergencia.parse({ ...valoresFormulario(emergencia), modalidad: 'traslado_programado' });
+    expect(construirCambiosEmergencia(emergencia, formulario)).toEqual({ modalidad: 'traslado_programado' });
+    const igual = esquemaEmergencia.parse(valoresFormulario(emergencia));
+    expect(construirCambiosEmergencia(emergencia, igual)).toEqual({});
   });
 });

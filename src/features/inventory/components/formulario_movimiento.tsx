@@ -212,25 +212,14 @@ function FormularioMovimientoCargado({
 
         <fieldset disabled={enviando} className="space-y-4">
           <legend className="mb-3 text-sm font-semibold text-texto">Tipo y ubicaciones</legend>
-          <CampoSelector id="tipo-movimiento" etiqueta="Tipo de movimiento" icono={Tag} ayuda={DESCRIPCIONES_TIPO_MOVIMIENTO[tipo]} {...register('tipo')}>
-            {TIPOS_MOVIMIENTO.map((opcion) => (
-              <option key={opcion} value={opcion}>
-                {ETIQUETAS_TIPO_MOVIMIENTO[opcion]}
-              </option>
-            ))}
-          </CampoSelector>
-          {tipo === 'ajuste' && (
-            <div className="space-y-1.5">
-              <p className="text-sm font-medium text-texto">La existencia…</p>
-              <SelectorSegmentado<SentidoAjuste>
-                etiqueta="Sentido del ajuste"
-                valor={sentido}
-                opciones={OPCIONES_SENTIDO}
-                alCambiar={(valor) => setValue('sentidoAjuste', valor, { shouldDirty: true })}
-              />
-            </div>
-          )}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-3">
+            <CampoSelector id="tipo-movimiento" etiqueta="Tipo de movimiento" icono={Tag} ayuda={DESCRIPCIONES_TIPO_MOVIMIENTO[tipo]} {...register('tipo')}>
+              {TIPOS_MOVIMIENTO.map((opcion) => (
+                <option key={opcion} value={opcion}>
+                  {ETIQUETAS_TIPO_MOVIMIENTO[opcion]}
+                </option>
+              ))}
+            </CampoSelector>
             {regla.origen && (
               <Controller
                 control={control}
@@ -272,6 +261,17 @@ function FormularioMovimientoCargado({
               />
             )}
           </div>
+          {tipo === 'ajuste' && (
+            <div className="space-y-1.5">
+              <p className="text-sm font-medium text-texto">La existencia…</p>
+              <SelectorSegmentado<SentidoAjuste>
+                etiqueta="Sentido del ajuste"
+                valor={sentido}
+                opciones={OPCIONES_SENTIDO}
+                alCambiar={(valor) => setValue('sentidoAjuste', valor, { shouldDirty: true })}
+              />
+            </div>
+          )}
         </fieldset>
 
         <fieldset disabled={enviando} className="space-y-3">
@@ -288,6 +288,11 @@ function FormularioMovimientoCargado({
                   Los lotes vencidos y los equipos no operativos no pueden ir a una ambulancia ni consumirse.
                 </p>
               )}
+              <div aria-hidden className="hidden gap-2 px-3 text-xs font-medium tracking-wide text-texto-secundario uppercase md:flex">
+                <span className="flex-1">{desdeOrigen ? 'Qué sale del origen' : 'Insumo y lote o equipo'}</span>
+                <span className="w-40">Cantidad</span>
+                <span className="w-8" />
+              </div>
               <ol className="space-y-2">
                 {lineas.fields.map((campo, indice) => {
                   const valor = valoresLineas[indice] ?? LINEA_VACIA;
@@ -336,17 +341,17 @@ function FormularioMovimientoCargado({
 
         <fieldset disabled={enviando} className="space-y-4">
           <legend className="mb-3 text-sm font-semibold text-texto">Soporte</legend>
-          <CampoTexto
-            id="motivo-movimiento"
-            etiqueta="Motivo"
-            icono={MessageSquareText}
-            obligatorio={regla.motivoObligatorio}
-            maxLength={150}
-            placeholder={tipo === 'baja' ? 'Vencido, dañado…' : undefined}
-            error={errors.motivo?.message}
-            {...register('motivo')}
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-3">
+            <CampoTexto
+              id="motivo-movimiento"
+              etiqueta="Motivo"
+              icono={MessageSquareText}
+              obligatorio={regla.motivoObligatorio}
+              maxLength={150}
+              placeholder={tipo === 'baja' ? 'Vencido, dañado…' : undefined}
+              error={errors.motivo?.message}
+              {...register('motivo')}
+            />
             <CampoTexto id="documento-movimiento" etiqueta="Documento de referencia" icono={FileText} obligatorio={false} placeholder="Remisión 0045" maxLength={150} error={errors.documentoReferencia?.message} {...register('documentoReferencia')} />
             <CampoTexto
               id="realizado-en"

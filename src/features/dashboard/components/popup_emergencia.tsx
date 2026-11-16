@@ -9,6 +9,7 @@ import type { Ruta } from '../../assignments/schemas/ruta.schema';
 import { resumenRuta } from '../../assignments/utils/formato_ruta';
 import {
   InsigniaEstadoEmergencia,
+  InsigniaModalidad,
   InsigniaPrioridad,
   InsigniaReporteCiudadano,
 } from '../../emergencies/components/insignias_emergencia';
@@ -115,6 +116,7 @@ export function PopupEmergencia({ emergencia, posicion, ahora, rutas, etapa, alC
 
         <div className="flex flex-wrap items-center gap-1.5 px-4 pt-3">
           <InsigniaPrioridad prioridad={emergencia.prioridad} detallada />
+          <InsigniaModalidad modalidad={emergencia.modalidad} />
           <InsigniaEstadoEmergencia estado={emergencia.estado} />
           {emergencia.informanteUsuarioId && <InsigniaReporteCiudadano />}
         </div>

@@ -1,5 +1,6 @@
 import { Ellipsis, type LucideIcon } from 'lucide-react';
-import { useEffect, useId, useRef, useState } from 'react';
+import { Fragment, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { createPortal } from 'react-dom';
 
 export interface AccionMenu {
   etiqueta: string;
@@ -13,64 +14,146 @@ interface PropiedadesMenuAcciones {
   acciones: AccionMenu[];
 }
 
-interface Posicion {
-  superior: number;
-  derecha: number;
+interface MenuAbierto {
+  /** Rectángulo del botón al abrir, en coordenadas de la ventana. */
+  ancla: DOMRect;
+  /** Dónde se monta el menú: el diálogo que contiene el botón o el `body`. */
+  contenedor: HTMLElement;
 }
 
-const ANCHO_MENU = 224;
+const ANCHO_MENU = 232;
+const SEPARACION = 6;
+const MARGEN_VENTANA = 8;
 
-/** Menú contextual por registro; usa posición fija para no recortarse dentro de tablas. */
+const limitar = (valor: number, minimo: number, maximo: number) =>
+  Math.min(Math.max(valor, minimo), Math.max(minimo, maximo));
+
+/**
+ * Ubica el menú junto al botón: abajo si cabe, arriba si no, siempre dentro de la ventana.
+ * Al final mide dónde quedó realmente y corrige: si un ancestro tiene `backdrop-filter` o
+ * `transform`, `position: fixed` deja de referirse a la ventana y el menú quedaría desplazado.
+ */
+function posicionarMenu(menu: HTMLElement, ancla: DOMRect) {
+  const alto = menu.offsetHeight;
+  const ancho = menu.offsetWidth;
+  const altoVentana = window.innerHeight;
+  const espacioAbajo = altoVentana - ancla.bottom - MARGEN_VENTANA;
+  const espacioArriba = ancla.top - MARGEN_VENTANA;
+  const haciaArriba = espacioAbajo < alto + SEPARACION && espacioArriba > espacioAbajo;
+
+  const superior = limitar(
+    haciaArriba ? ancla.top - SEPARACION - alto : ancla.bottom + SEPARACION,
+    MARGEN_VENTANA,
+    altoVentana - alto - MARGEN_VENTANA,
+  );
+  const izquierda = limitar(ancla.right - ancho, MARGEN_VENTANA, window.innerWidth - ancho - MARGEN_VENTANA);
+
+  menu.style.top = `${superior}px`;
+  menu.style.left = `${izquierda}px`;
+  const real = menu.getBoundingClientRect();
+  menu.style.top = `${superior + (superior - real.top)}px`;
+  menu.style.left = `${izquierda + (izquierda - real.left)}px`;
+  menu.style.transformOrigin = haciaArriba ? 'bottom right' : 'top right';
+  menu.style.visibility = 'visible';
+}
+
+const claseOpcion = {
+  normal:
+    'text-texto hover:bg-primario/10 hover:text-primario focus:bg-primario/10 focus:text-primario',
+  peligro: 'text-critico hover:bg-critico/10 focus:bg-critico/10',
+} as const;
+
+const claseIcono = {
+  normal: 'text-texto-secundario group-hover:text-primario group-focus:text-primario',
+  peligro: 'text-critico',
+} as const;
+
+/** Menú contextual por registro: se abre junto al botón, con mouse o con teclado. */
 export function MenuAcciones({ etiqueta, acciones }: PropiedadesMenuAcciones) {
-  const [posicion, setPosicion] = useState<Posicion | null>(null);
+  const [abiertoEn, setAbiertoEn] = useState<MenuAbierto | null>(null);
   const botonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const idMenu = useId();
-  const abierto = posicion !== null;
+  const abierto = abiertoEn !== null;
+
+  useLayoutEffect(() => {
+    if (abiertoEn && menuRef.current) posicionarMenu(menuRef.current, abiertoEn.ancla);
+  }, [abiertoEn]);
 
   useEffect(() => {
     if (!abierto) return;
-    const cerrar = () => setPosicion(null);
+    const cerrar = () => setAbiertoEn(null);
     const cerrarAlPulsarFuera = (evento: PointerEvent) => {
       const { target } = evento;
-      if (
-        target instanceof Node &&
-        !menuRef.current?.contains(target) &&
-        !botonRef.current?.contains(target)
-      ) {
+      if (target instanceof Node && !menuRef.current?.contains(target) && !botonRef.current?.contains(target)) {
         cerrar();
       }
     };
-    const cerrarConEscape = (evento: KeyboardEvent) => {
-      if (evento.key === 'Escape') {
-        cerrar();
-        botonRef.current?.focus();
-      }
+    // Se cierra al desplazar la página, pero no al desplazar dentro del propio menú.
+    const cerrarAlDesplazar = (evento: Event) => {
+      if (!(evento.target instanceof Node && menuRef.current?.contains(evento.target))) cerrar();
     };
     document.addEventListener('pointerdown', cerrarAlPulsarFuera);
-    document.addEventListener('keydown', cerrarConEscape);
     window.addEventListener('resize', cerrar);
-    window.addEventListener('scroll', cerrar, true);
-    menuRef.current?.querySelector('button')?.focus();
+    window.addEventListener('scroll', cerrarAlDesplazar, true);
+    opcionesMenu(menuRef.current)[0]?.focus();
     return () => {
       document.removeEventListener('pointerdown', cerrarAlPulsarFuera);
-      document.removeEventListener('keydown', cerrarConEscape);
       window.removeEventListener('resize', cerrar);
-      window.removeEventListener('scroll', cerrar, true);
+      window.removeEventListener('scroll', cerrarAlDesplazar, true);
     };
   }, [abierto]);
 
+  const cerrarYVolver = () => {
+    setAbiertoEn(null);
+    botonRef.current?.focus();
+  };
+
   const alternar = () => {
     if (abierto) {
-      setPosicion(null);
+      setAbiertoEn(null);
       return;
     }
-    const rectangulo = botonRef.current?.getBoundingClientRect();
-    if (!rectangulo) return;
-    setPosicion({
-      superior: rectangulo.bottom + 6,
-      derecha: Math.max(window.innerWidth - rectangulo.right, 8),
+    const boton = botonRef.current;
+    if (!boton) return;
+    setAbiertoEn({
+      ancla: boton.getBoundingClientRect(),
+      // Dentro de un diálogo modal el menú debe montarse en él para quedar por encima.
+      contenedor: boton.closest('dialog') ?? document.body,
     });
+  };
+
+  const abrirConTeclado = (evento: KeyboardEvent<HTMLButtonElement>) => {
+    if (evento.key === 'ArrowDown' && !abierto) {
+      evento.preventDefault();
+      alternar();
+    }
+  };
+
+  const navegar = (evento: KeyboardEvent<HTMLDivElement>) => {
+    if (evento.key === 'Escape') {
+      // Evita que también se cierre el diálogo que contiene la tabla.
+      evento.preventDefault();
+      evento.stopPropagation();
+      cerrarYVolver();
+      return;
+    }
+    if (evento.key === 'Tab') {
+      setAbiertoEn(null);
+      return;
+    }
+    const opciones = opcionesMenu(menuRef.current);
+    const actual = opciones.findIndex((opcion) => opcion === document.activeElement);
+    const destino: Record<string, number> = {
+      ArrowDown: (actual + 1) % opciones.length,
+      ArrowUp: (actual - 1 + opciones.length) % opciones.length,
+      Home: 0,
+      End: opciones.length - 1,
+    };
+    const indice = destino[evento.key];
+    if (indice === undefined) return;
+    evento.preventDefault();
+    opciones[indice]?.focus();
   };
 
   return (
@@ -79,46 +162,66 @@ export function MenuAcciones({ etiqueta, acciones }: PropiedadesMenuAcciones) {
         ref={botonRef}
         type="button"
         onClick={alternar}
+        onKeyDown={abrirConTeclado}
         aria-label={etiqueta}
         title={etiqueta}
+        aria-haspopup="menu"
         aria-expanded={abierto}
         aria-controls={abierto ? idMenu : undefined}
-        className={`flex size-9 items-center justify-center rounded-xl text-texto-secundario transition-colors duration-150 hover:bg-white hover:text-texto focus-visible:ring-2 focus-visible:ring-primario/40 focus-visible:outline-none ${abierto ? 'bg-white text-texto' : ''}`}
+        className={`flex size-9 items-center justify-center rounded-xl transition-colors duration-150 hover:bg-primario/10 hover:text-primario focus-visible:ring-2 focus-visible:ring-primario/40 focus-visible:outline-none ${
+          abierto ? 'bg-primario/10 text-primario' : 'text-texto-secundario'
+        }`}
       >
         <Ellipsis aria-hidden strokeWidth={1.75} className="size-[18px]" />
       </button>
 
-      {posicion && (
-        <div
-          ref={menuRef}
-          id={idMenu}
-          style={{ top: posicion.superior, right: posicion.derecha, width: ANCHO_MENU }}
-          className="vidrio-fuerte fixed z-1500 rounded-2xl p-1.5"
-        >
-          {acciones.map(({ etiqueta: texto, icono: Icono, alSeleccionar, tono = 'normal' }) => (
-            <button
-              key={texto}
-              type="button"
-              onClick={() => {
-                setPosicion(null);
-                alSeleccionar();
-              }}
-              className={`flex h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm transition-colors duration-150 focus-visible:outline-none ${
-                tono === 'peligro'
-                  ? 'text-critico hover:bg-critico/6 focus-visible:bg-critico/6'
-                  : 'text-texto hover:bg-white focus-visible:bg-white'
-              }`}
-            >
-              <Icono
-                aria-hidden
-                strokeWidth={1.75}
-                className={`size-4 shrink-0 ${tono === 'peligro' ? '' : 'text-texto-secundario'}`}
-              />
-              {texto}
-            </button>
-          ))}
-        </div>
-      )}
+      {abiertoEn &&
+        createPortal(
+          <div
+            ref={menuRef}
+            id={idMenu}
+            role="menu"
+            aria-label={etiqueta}
+            onKeyDown={navegar}
+            // Oculto hasta que `posicionarMenu` lo ubica, para que no parpadee en otro lugar.
+            style={{ width: ANCHO_MENU, top: 0, left: 0, visibility: 'hidden' }}
+            className="vidrio-fuerte animar-menu fixed z-1500 max-h-[calc(100dvh-16px)] overflow-y-auto rounded-2xl p-1.5"
+          >
+            {acciones.map(({ etiqueta: texto, icono: Icono, alSeleccionar, tono = 'normal' }, indice) => {
+              // Las acciones de riesgo quedan separadas del resto para no pulsarlas por error.
+              const separar = tono === 'peligro' && indice > 0 && acciones[indice - 1]?.tono !== 'peligro';
+              return (
+                <Fragment key={texto}>
+                  {separar && <div role="separator" className="mx-2 my-1 h-px bg-borde/80" />}
+                  <button
+                    type="button"
+                    role="menuitem"
+                    tabIndex={-1}
+                    // Pasar el puntero enfoca la opción: el mouse y el teclado resaltan lo mismo.
+                    onPointerMove={(evento) => evento.currentTarget.focus({ preventScroll: true })}
+                    onClick={() => {
+                      setAbiertoEn(null);
+                      alSeleccionar();
+                    }}
+                    className={`group flex h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-colors duration-100 focus:outline-none ${claseOpcion[tono]}`}
+                  >
+                    <Icono
+                      aria-hidden
+                      strokeWidth={1.75}
+                      className={`size-4 shrink-0 transition-colors duration-100 ${claseIcono[tono]}`}
+                    />
+                    <span className="truncate">{texto}</span>
+                  </button>
+                </Fragment>
+              );
+            })}
+          </div>,
+          abiertoEn.contenedor,
+        )}
     </>
   );
+}
+
+function opcionesMenu(menu: HTMLElement | null): HTMLElement[] {
+  return menu ? Array.from(menu.querySelectorAll<HTMLElement>('[role="menuitem"]')) : [];
 }

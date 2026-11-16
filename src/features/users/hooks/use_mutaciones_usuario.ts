@@ -6,6 +6,7 @@ import {
   cambiarEstadoUsuario,
   cambiarRolUsuario,
   crearUsuario,
+  restablecerContrasenaUsuario,
 } from '../services/usuarios.service';
 import type { DatosActualizarUsuario, DatosCambioEstado } from '../types/usuario.types';
 
@@ -43,5 +44,17 @@ export function useCambiarEstadoUsuario() {
     mutationFn: ({ id, datos }: { id: string; datos: DatosCambioEstado }) =>
       cambiarEstadoUsuario(id, datos),
     onSuccess: invalidar,
+  });
+}
+
+/**
+ * No cambia ningún dato de la lista, así que no invalida nada. `gcTime: 0` saca la mutación
+ * de la caché al cerrar el diálogo, para que la contraseña no quede guardada en sus variables.
+ */
+export function useRestablecerContrasena() {
+  return useMutation({
+    mutationFn: ({ id, contrasenaNueva }: { id: string; contrasenaNueva: string }) =>
+      restablecerContrasenaUsuario(id, contrasenaNueva),
+    gcTime: 0,
   });
 }

@@ -13,6 +13,7 @@ import { rutasInstituciones } from '../features/health_institutions/routes/rutas
 import { rutasPerfil } from '../features/profile/routes/rutas_perfil';
 import { rutasTurnos } from '../features/shifts/routes/rutas_turnos';
 import { rutasUsuarios } from '../features/users/routes/rutas_usuarios';
+import { rutasHistorias } from '../features/prehospital_care/routes/rutas_historias';
 import { rutasVerificaciones } from '../features/citizen_verifications/routes/rutas_verificaciones';
 import { DisenoPrincipal } from '../layouts/diseno_principal';
 import { RutaProtegida } from './ruta_protegida';
@@ -44,6 +45,7 @@ export const enrutador = createBrowserRouter([
               ...rutasVerificaciones,
               ...rutasListasChequeo,
               ...rutasInventario,
+              ...rutasHistorias,
             ],
           },
         ],

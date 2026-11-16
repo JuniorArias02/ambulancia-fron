@@ -46,3 +46,8 @@ export async function cambiarEstadoUsuario(
   const { data } = await api.patch<Usuario>(`/usuarios/${encodeURIComponent(id)}/estado`, datos);
   return data;
 }
+
+/** Solo administrador; cierra todas las sesiones del usuario. Responde 204 sin cuerpo. */
+export async function restablecerContrasenaUsuario(id: string, contrasenaNueva: string): Promise<void> {
+  await api.put(`/usuarios/${encodeURIComponent(id)}/contrasena`, { contrasenaNueva });
+}

@@ -1,3 +1,5 @@
+import type { ModalidadServicio } from '../../../constants/modalidades_servicio';
+
 export type FuenteEmergencia = 'linea_123' | 'telefono' | 'radio' | 'app';
 
 export type TipoIncidente =
@@ -30,6 +32,8 @@ export interface Emergencia {
   descripcion: string;
   tipoIncidente: TipoIncidente | null;
   prioridad: PrioridadEmergencia | null;
+  /** Tipo de servicio: define las firmas que exige la historia clínica. */
+  modalidad: ModalidadServicio;
   direccion: string | null;
   referenciaLugar: string | null;
   coordenadas: Coordenadas | null;
@@ -59,6 +63,7 @@ export interface FiltrosEmergencias {
   soloActivas?: boolean;
   prioridad?: PrioridadEmergencia;
   tipoIncidente?: TipoIncidente;
+  modalidad?: ModalidadServicio;
   /** Día local `AAAA-MM-DD`; el servicio lo convierte al rango ISO que espera la API. */
   desde?: string;
   hasta?: string;
@@ -73,6 +78,8 @@ interface CamposEmergencia {
   informanteTelefono: string | null;
   tipoIncidente: TipoIncidente | null;
   prioridad: PrioridadEmergencia | null;
+  /** Nunca `null`: el backend responde 400. */
+  modalidad: ModalidadServicio;
   direccion: string | null;
   referenciaLugar: string | null;
   latitud: number | null;

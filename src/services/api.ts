@@ -36,9 +36,25 @@ api.interceptors.request.use((configuracion) => {
   return configuracion;
 });
 
+/**
+ * En las descargas (`responseType: 'blob'`) el cuerpo del error también llega como Blob:
+ * se lee como JSON para no perder el `mensaje` del backend (p. ej. el 422 de una exportación).
+ */
+async function leerErrorEnBlob(error: unknown): Promise<void> {
+  if (!axios.isAxiosError(error) || !(error.response?.data instanceof Blob)) return;
+  const { response } = error;
+  if (!response.data.type.includes('json')) return;
+  try {
+    const cuerpo: unknown = JSON.parse(await response.data.text());
+    response.data = cuerpo;
+  } catch {
+    // Si no es JSON válido se usa el mensaje genérico del estado.
+  }
+}
+
 api.interceptors.response.use(
   (respuesta) => respuesta,
-  (error: unknown) => {
+  async (error: unknown) => {
     if (
       axios.isAxiosError(error) &&
       error.response?.status === 401 &&
@@ -46,6 +62,7 @@ api.interceptors.response.use(
     ) {
       manejadorNoAutorizado?.();
     }
+    await leerErrorEnBlob(error);
     return Promise.reject(normalizarError(error));
   },
 );

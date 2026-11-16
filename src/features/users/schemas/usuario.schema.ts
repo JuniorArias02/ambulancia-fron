@@ -25,6 +25,13 @@ const telefono = z
     message: 'De 7 a 20 caracteres: dígitos, espacios, guiones y + inicial.',
   });
 
+/** La misma política de contraseñas de todo el sistema. */
+const contrasena = z
+  .string()
+  .min(10, 'Debe tener al menos 10 caracteres.')
+  .max(128, 'No puede superar 128 caracteres.')
+  .regex(/^(?=.*\p{L})(?=.*\d).+$/u, 'Debe contener al menos una letra y un número.');
+
 export const esquemaCrearUsuario = z.object({
   nombres,
   apellidos,
@@ -35,11 +42,7 @@ export const esquemaCrearUsuario = z.object({
     .max(150, 'Máximo 150 caracteres.')
     .pipe(z.email('Ingresa un correo electrónico válido.')),
   telefono,
-  contrasena: z
-    .string()
-    .min(10, 'Debe tener al menos 10 caracteres.')
-    .max(128, 'No puede superar 128 caracteres.')
-    .regex(/^(?=.*\p{L})(?=.*\d).+$/u, 'Debe contener al menos una letra y un número.'),
+  contrasena,
   // El selector empieza vacío (''); al validar solo se acepta un rol real.
   rol: z
     .union([z.literal(''), z.enum(ROLES_INTERNOS)])
@@ -63,3 +66,26 @@ export const esquemaCambioEstado = z.object({
 });
 
 export type FormularioCambioEstado = z.infer<typeof esquemaCambioEstado>;
+
+/** La confirmación solo se valida aquí: al backend se envía únicamente `contrasenaNueva`. */
+export const esquemaRestablecerContrasena = z
+  .object({
+    contrasenaNueva: contrasena,
+    confirmacion: z.string().min(1, 'Confirma la contraseña.'),
+  })
+  .refine((datos) => datos.contrasenaNueva === datos.confirmacion, {
+    path: ['confirmacion'],
+    message: 'Las contraseñas no coinciden.',
+  });
+
+export type FormularioRestablecerContrasena = z.infer<typeof esquemaRestablecerContrasena>;
+
+export const esquemaDesactivarFirma = z.object({
+  motivo: z
+    .string()
+    .trim()
+    .min(5, 'Describe el motivo con al menos 5 caracteres.')
+    .max(255, 'Máximo 255 caracteres.'),
+});
+
+export type FormularioDesactivarFirma = z.infer<typeof esquemaDesactivarFirma>;

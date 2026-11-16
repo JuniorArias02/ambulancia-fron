@@ -14,7 +14,8 @@ import type { Existencia, TipoInsumo, TipoUbicacion } from '../types/inventario.
 import { deCatalogo, formatearCantidad, formatearDia, leerPagina } from '../utils/formato_inventario';
 import { opcionesUbicaciones } from '../utils/opciones_inventario';
 import { BarraHerramientas } from './barra_herramientas';
-import { BarraFiltros, Buscador, FiltroBuscable } from './campos_filtro';
+import { BarraFiltros, Buscador } from './campos_filtro';
+import { FiltroBuscable } from '../../../components/forms/filtro_buscable';
 import { Insignia } from './insignia';
 import { NombreUbicacion } from './insignias_movimiento';
 import { ListadoInventario } from './listado_inventario';

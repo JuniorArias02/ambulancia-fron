@@ -24,6 +24,7 @@ const base: Emergencia = {
   descripcion: 'Accidente en la calle 72',
   tipoIncidente: 'accidente_transito',
   prioridad: null,
+  modalidad: 'emergencia',
   direccion: 'Calle 72 # 15-20',
   referenciaLugar: null,
   coordenadas: null,
